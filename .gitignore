@@ -1,0 +1,7 @@
+node_modules
+coverage
+coverageEnv
+coverage.*
+build
+scTopics
+npm-debug.log

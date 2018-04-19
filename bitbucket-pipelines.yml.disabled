@@ -1,0 +1,19 @@
+# This is a sample build configuration for JavaScript.
+# Check our guides at https://confluence.atlassian.com/x/14UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+# image: node:7.7.3
+
+# pipelines:
+#   default:
+#     - step:
+#         caches:
+#           - node
+#         script: 
+#           - npm install
+#           - npm install -g truffle
+#           - npm install solidity-coverage
+#           - ./node_modules/.bin/solidity-coverage
+#           - npm install -g istanbul
+#           - istanbul check-coverage --statements 100 --branches 80 --functions 100 --lines 100
