@@ -1,10 +1,10 @@
-# PATH-PROTOCOL # [![Build Status](https://travis-ci.org/path-foundation/path-protocol.svg?branch=master)](https://travis-ci.org/path-foundation/path-protocol)
+# PATH protocol  [![Build Status](https://travis-ci.org/path-foundation/path-protocol.svg?branch=master)](https://travis-ci.org/path-foundation/path-protocol)
 
-Alpha version of the PATH contract. 
+PATH protocol smart contracts. 
 
 ### What is this repository for? ###
 
-* Version 0.0.1
+* Version 0.0.2
 
 ### How do I get set up? ###
 
@@ -26,10 +26,6 @@ to upgrade etehreum compiler for your truffle install:
 Then open `package.json`, change `solc` version to the desired one, save and run `npm install`.
 
 For functional tests use https://aleybovich.github.io/smart-contract-executor/
-
-### Contribution guidelines ###
-
-* Ask
 
 ### Who do I talk to? ###
 
