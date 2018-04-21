@@ -1,5 +1,5 @@
 /* solium-disable security/no-block-members */
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.23;
 
 import "./Deputable.sol";
 import "./Certificates.sol";
@@ -17,8 +17,7 @@ contract PathToken {
     Contract serves as a queue of requests and an escrow of payments (or refunds).
  */
 contract Escrow is Deputable {
-    // Constructor
-    function Escrow(PathToken _token, Certificates _certificatesContract) public {
+    constructor(PathToken _token, Certificates _certificatesContract) public {
         token = _token;
         certificatesContract = _certificatesContract;
         acceptsRequests = true;

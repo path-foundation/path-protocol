@@ -1,4 +1,4 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.23;
 
 import "./Deputable.sol";
 
@@ -58,7 +58,7 @@ contract Certificates is Deputable {
     event LogAddCertificate(address indexed _userAddress, bytes32 _certificateId);
 
     // Constructor
-    function Certificates(Issuers _issuersContract) public {
+    constructor(Issuers _issuersContract) public {
         issuersContract = _issuersContract; 
     }
 

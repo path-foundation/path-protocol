@@ -1,4 +1,4 @@
-# README #
+# PATH-PROTOCOL # [![Build Status](https://travis-ci.org/path-foundation/path-protocol.svg?branch=master)](https://travis-ci.org/path-foundation/path-protocol)
 
 Alpha version of the PATH contract. 
 

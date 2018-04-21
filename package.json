@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "mocha": "^5.1.0",
-    "solidity-coverage": "^0.4.15",
-    "truffle-core": "^4.1.6"
+    "solidity-coverage": "^0.5.0",
+    "truffle-core": "^4.1.7"
   }
 }
