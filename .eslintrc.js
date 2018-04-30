@@ -23,6 +23,7 @@ module.exports = {
             "functions": "ignore"
         }],
         // off
+        "no-console": "off",
         "id-length": "off",
         "func-names": "off",
         "spaced-comment": "off",

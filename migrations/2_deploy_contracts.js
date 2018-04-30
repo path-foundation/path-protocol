@@ -1,12 +1,28 @@
-const Certificates = artifacts.require("Certificates");
-const Issuers = artifacts.require("Issuers");
-
-//const pathTokenAddress = 0x8f0483125fcb9aaaefa9209d8e9d7b9c8b9fb90f; // For test
+/* eslint-disable no-undef */
+const Certificates = artifacts.require('Certificates');
+const Issuers = artifacts.require('Issuers');
+const Escrow = artifacts.require('Escrow');
+const PathToken = artifacts.require('PathToken');
+/* eslint-enable no-undef */
 
 module.exports = function (deployer) {
-    deployer.deploy(Issuers)
+    deployer.deploy(PathToken)
         .then(() => {
-            console.log(Issuers.address);
-            deployer.deploy(Certificates, Issuers.address);
+            deployer.deploy(Issuers)
+                .then(() => {
+                    deployer.deploy(Certificates, Issuers.address)
+                        .then(() => {
+                            deployer.deploy(Escrow, PathToken.address, Certificates.address)
+                                .then(() => {
+                                    console.log('==================================================');
+                                    console.log('======= Contracts deployed: ======================');
+                                    console.log(`PathToken: ${PathToken.address}`);
+                                    console.log(`Issuers: ${Issuers.address}`);
+                                    console.log(`Certificates: ${Certificates.address}`);
+                                    console.log(`Escrow: ${Escrow.address}`);
+                                    console.log('==================================================');
+                                });
+                        });
+                });
         });
 };

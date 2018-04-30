@@ -28,7 +28,7 @@ contract('Issuers', (accounts) => {
         issuer1name = 'MIT';
         issuer2address = accounts[4];
 
-        instance = await Issuers.deployed();
+        instance = await Issuers.new();
     });
 
     // Test Deputable interface
