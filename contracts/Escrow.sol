@@ -48,11 +48,19 @@ contract Escrow is Deputable {
     }
 
 
-    uint8 public constant REQUEST_STATUS_PENDING = 0; // Seeker posted the request
-    uint8 public constant REQUEST_STATUS_PROCESSING = 1; // User picked up the request
-    uint8 public constant REQUEST_STATUS_PROCESSED = 2; // User processed the request and posted the cert locator
-    uint8 public constant REQUEST_STATUS_FAILED = 3; // User failed to process the request - refundable
-    uint8 public constant REQUEST_STATUS_RECALLED = 4; // Seeker recalled the request before the user picked it up
+    // Seeker posted the request
+    uint8 public constant REQUEST_STATUS_PENDING = 0; 
+     // User picked up the request
+    uint8 public constant REQUEST_STATUS_PROCESSING = 1;
+    // User processed the request and posted the cert locator
+    uint8 public constant REQUEST_STATUS_PROCESSED = 2; 
+    // Seeker confirmed that they have received the certificate; 
+    // at this point tokens are distributed between the user and issuers
+    uint8 public constant REQUEST_STATUS_CONFIRMED = 3;
+    // User failed to process the request - refundable
+    uint8 public constant REQUEST_STATUS_FAILED = 4; 
+    // Seeker recalled the request before the user picked it up
+    uint8 public constant REQUEST_STATUS_RECALLED = 5; 
 
     struct DataRequest {
         // Seeker, information requestor
@@ -120,7 +128,7 @@ contract Escrow is Deputable {
 
 
     // 3. User provides the list of certificate locators encrypted with the seeker's public key
-    // This changes the status of teh request to REQUEST_STATUS_PROCESSED and triggers a payment
+    // This changes the status of the request to REQUEST_STATUS_PROCESSED and triggers a payment
     // to all involved parties (user + issuers)
     // function submitResponse(uint requestIndex, bytes[] response) public {
 
