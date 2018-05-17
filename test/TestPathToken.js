@@ -5,7 +5,6 @@ const contract = global.contract;
 const assert = global.assert;
 
 const PathToken = artifacts.require('PathToken');
-//const BigNumber = require("bignumber.js");
 
 contract('PathToken', (accounts) => {
     let ownerAddress,
@@ -154,14 +153,5 @@ contract('PathToken', (accounts) => {
         const allowance = await instance.allowance(user1Address, ownerAddress);
 
         assert.ok(allowance.equals(467));
-    });
-
-    // Test burnable
-    it('Test burnable interface', async () => {
-        const currentBalance = await instance.balanceOf(ownerAddress);
-        await instance.burn(5);
-        const newBalance = await instance.balanceOf(ownerAddress);
-
-        assert.ok(newBalance.equals(currentBalance - 5), 'Current balance shoud be 5 tokens less');
     });
 });

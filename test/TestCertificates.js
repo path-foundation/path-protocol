@@ -4,7 +4,6 @@ const contract = global.contract;
 const assert = global.assert;
 
 const getLogArgument = require('./util/logs.js').getLogArgument;
-//const bs58 = require('bs58');
 const sha256 = require('js-sha256').sha256;
 
 const Certificates = artifacts.require('Certificates');

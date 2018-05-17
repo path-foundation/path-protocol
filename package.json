@@ -18,13 +18,12 @@
   "license": "ISC",
   "homepage": "https://github.com/path-foundation/path-protocol#path-protocol--",
   "dependencies": {
-    "bs58": "^4.0.1",
     "js-sha256": "^0.9.0",
-    "web3": "^0.20.6",
-    "zeppelin-solidity": "^1.8.0"
+    "openzeppelin-solidity": "^1.9.0",
+    "web3": "^0.20.6"
   },
   "devDependencies": {
-    "mocha": "^5.1.0",
+    "mocha": "^5.1.1",
     "solidity-coverage": "^0.5.0",
     "truffle-core": "^4.1.7"
   }
