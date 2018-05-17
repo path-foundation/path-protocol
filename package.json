@@ -1,7 +1,7 @@
 {
-  "name": "path-alpha-contract",
-  "version": "1.0.0",
-  "description": "Alpha version of the PATH contract.",
+  "name": "path-protocol",
+  "version": "0.1.1",
+  "description": "The PATH protocol",
   "main": "truffle.js",
   "directories": {
     "test": "test"
@@ -12,11 +12,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://mysuperbucket@bitbucket.org/pathcoin/path-alpha-contract.git"
+    "url": "git+https://github.com/path-foundation/path-protocol/path-protocol.git"
   },
   "author": "",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/pathcoin/path-alpha-contract#readme",
+  "homepage": "https://github.com/path-foundation/path-protocol#path-protocol--",
   "dependencies": {
     "bs58": "^4.0.1",
     "js-sha256": "^0.9.0",
