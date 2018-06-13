@@ -15,6 +15,7 @@ PATH protocol smart contracts.
 * truffle compile
 * truffle migrate
 * truffle test
+* npm install -g truffle-flattener
 
 If using VS Code, make sure you have the user setting "solidity.compileUsingRemoteVersion": "latest"
 
