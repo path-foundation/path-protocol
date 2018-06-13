@@ -1,11 +1,9 @@
-/* eslint no-console: off */
+/* eslint no-console: off, no-control-regex: "off" */
 
 // Define these truffle-injected globals so that eslint doesn't complain.
-const artifacts = global.artifacts;
-const contract = global.contract;
-const assert = global.assert;
+const { artifacts, contract, assert } = global;
 
-const getLogArgument = require('./util/logs.js').getLogArgument;
+const { getLogArgument } = require('./util/logs.js');
 const web3 = require('web3');
 
 const Issuers = artifacts.require('Issuers');
@@ -21,12 +19,15 @@ contract('Issuers', (accounts) => {
     let instance;
 
     before(async () => {
-        ownerAddress = accounts[0];
-        tempOwnerAddress = accounts[1];
-        deputyAddress = accounts[2];
-        issuer1address = accounts[3];
+        [
+            ownerAddress,
+            tempOwnerAddress,
+            deputyAddress,
+            issuer1address,
+            issuer2address,
+        ] = accounts;
+
         issuer1name = 'MIT';
-        issuer2address = accounts[4];
 
         instance = await Issuers.new();
     });
@@ -137,11 +138,11 @@ contract('Issuers', (accounts) => {
         // check the log event
         assert.equal(getLogArgument(tx.logs, 'LogRemoveIssuer', '_status'), 0, 'Status should be 0 (Success)');
 
-         // Check total Issuers
+        // Check total Issuers
         assert.equal((await instance.getTotalIssuersCount()).toNumber(), 1, 'Total Issuers count should be 1');
-         // Check active Issuers
+        // Check active Issuers
         assert.equal((await instance.countActiveIssuers.call()).toNumber(), 0, 'Active Issuers count should be 0');
-         // Check Issuer status
+        // Check Issuer status
         assert.equal((await instance.getIssuerStatus.call(issuer1address)).toNumber(), 2, 'Issuer staus should be 2 (inactive)');
     });
 

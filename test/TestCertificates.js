@@ -1,10 +1,8 @@
 // Define these truffle-injected globals so that eslint doesn't complain.
-const artifacts = global.artifacts;
-const contract = global.contract;
-const assert = global.assert;
+const { artifacts, contract, assert } = global;
 
-const getLogArgument = require('./util/logs.js').getLogArgument;
-const sha256 = require('js-sha256').sha256;
+const { getLogArgument } = require('./util/logs.js');
+const { sha256 } = require('js-sha256');
 
 const Certificates = artifacts.require('Certificates');
 const Issuers = artifacts.require('Issuers');
@@ -38,14 +36,17 @@ contract('Certificates', (accounts) => {
     let issuers;
 
     before(async () => {
-        ownerAddress = accounts[0];
-        user1address = accounts[1];
-        user2address = accounts[2];
-        issuer1address = accounts[3];
+        [
+            ownerAddress,
+            user1address,
+            user2address,
+            issuer1address,
+            issuer2address,
+            unregisteredIssuer,
+        ] = accounts;
+
         issuer1name = 'Amazon';
-        issuer2address = accounts[4];
         issuer2name = 'Microsoft';
-        unregisteredIssuer = accounts[5];
 
         issuers = await Issuers.new();
         instance = await Certificates.new(issuers.address);
@@ -59,21 +60,22 @@ contract('Certificates', (accounts) => {
     });
 
     it('Check issuers contract', async () => {
-        const issuersAddress = await instance.getIssuersContract();
+        const issuersAddress = await instance.issuersContract();
         assert.equal(issuersAddress, issuers.address, 'Issuers address should match');
     });
 
     it('Add a user certificate', async () => {
         const certificateHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
         const certificateId = `0x${sha256(sampleCertificateAWS.title)}`;
-        const expires = sampleCertificateAWS.expires;
+        const { expires } = sampleCertificateAWS;
 
         const tx = await instance.addCertificate(
             user1address,
             certificateHash,
             certificateId,
             expires,
-            { from: issuer1address });
+            { from: issuer1address }
+        );
 
         const addr = getLogArgument(tx.logs, 'LogAddCertificate', '_userAddress');
         const id = getLogArgument(tx.logs, 'LogAddCertificate', '_certificateId');
@@ -90,14 +92,15 @@ contract('Certificates', (accounts) => {
     it('Add second user certificate for the same user', async () => {
         const certificateHash = `0x${sha256(JSON.stringify(sampleCertificateMS))}`;
         const certificateId = `0x${sha256(sampleCertificateMS.title)}`;
-        const expires = sampleCertificateMS.expires;
+        const { expires } = sampleCertificateMS;
 
         const tx = await instance.addCertificate(
             user1address,
             certificateHash,
             certificateId,
             expires,
-            { from: issuer2address });
+            { from: issuer2address }
+        );
 
         const addr = getLogArgument(tx.logs, 'LogAddCertificate', '_userAddress');
         const id = getLogArgument(tx.logs, 'LogAddCertificate', '_certificateId');
@@ -110,12 +113,17 @@ contract('Certificates', (accounts) => {
     it('Attempt to add a user certificate by unregistered Issuer', async () => {
         const certificateHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
         const certificateId = `0x${sha256(sampleCertificateAWS.title)}`;
-        const expires = sampleCertificateAWS.expires;
+        const { expires } = sampleCertificateAWS;
 
         let error;
         try {
-            await instance.addCertificate(user1address, certificateHash, certificateId, expires,
-                { from: unregisteredIssuer });
+            await instance.addCertificate(
+                user1address,
+                certificateHash,
+                certificateId,
+                expires,
+                { from: unregisteredIssuer }
+            );
         } catch (e) {
             error = e;
         }

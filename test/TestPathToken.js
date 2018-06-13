@@ -1,8 +1,6 @@
 // Define these truffle-injected globals
 // so that eslint doesn't complain.
-const artifacts = global.artifacts;
-const contract = global.contract;
-const assert = global.assert;
+const { artifacts, contract, assert } = global;
 
 const PathToken = artifacts.require('PathToken');
 
@@ -15,10 +13,11 @@ contract('PathToken', (accounts) => {
     let instance;
 
     before(async () => {
-        ownerAddress = accounts[0];
-        tempOwnerAddress = accounts[1];
-        user1Address = accounts[2];
-        user2Address = accounts[3];
+        [ownerAddress, tempOwnerAddress, user1Address, user2Address] = accounts;
+        // ownerAddress = accounts[0];
+        // tempOwnerAddress = accounts[1];
+        // user1Address = accounts[2];
+        // user2Address = accounts[3];
 
         instance = await PathToken.deployed();
 
@@ -77,12 +76,12 @@ contract('PathToken', (accounts) => {
         it('Test transferring ownership to 0x0 account', async () => {
         // Try to transfer the ownership to 0x0 address
             await instance.transferOwnership('0x0')
-            .then(() => {
-                assert.fail();
-            })
-            .catch(() => {
-                assert.ok(true);
-            });
+                .then(() => {
+                    assert.fail();
+                })
+                .catch(() => {
+                    assert.ok(true);
+                });
         });
     });
 
@@ -147,8 +146,11 @@ contract('PathToken', (accounts) => {
         // Allow owner to spend 420 tokens from user1 balance
         await instance.approve(ownerAddress, 420, { from: user1Address });
         // Now increase that approval by 47 tokens
-        await instance.contract.increaseApproval.sendTransaction(ownerAddress,
-            47, { from: user1Address });
+        await instance.contract.increaseApproval.sendTransaction(
+            ownerAddress,
+            47,
+            { from: user1Address }
+        );
         // Check owner's allowance for spending user1's tokens - should be 467
         const allowance = await instance.allowance(user1Address, ownerAddress);
 

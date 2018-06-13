@@ -7,6 +7,7 @@ install:
   - npm install -g truffle
   - npm install solidity-coverage
 script: 
+  - ./node_modules/.bin/eslint ./test
   - ./node_modules/.bin/solidity-coverage
 #  - npm install -g istanbul
 #  - istanbul check-coverage --statements 100 --branches 80 --functions 100 --lines 100
