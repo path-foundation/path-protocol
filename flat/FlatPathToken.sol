@@ -4,7 +4,7 @@ pragma solidity ^0.4.24;
 
 /**
     Declares an interface for functionality allowing to notify the receiving contract 
-    of the transfer of tokens or approval. Inspired by ERC223 and ERC827
+    of the transfer of tokens or approval.
  */
 
 contract TransferAndCallbackInterface {
@@ -14,13 +14,10 @@ contract TransferAndCallbackInterface {
 // File: contracts/token/TransferAndCallbackReceiver.sol
 
 /**
- * @title Contract that will work with ERC223 tokens.
+ * An interface for a contract that receives tokens and gets notified after the transfer
  */
- 
 contract TransferAndCallbackReceiver { 
 /**
- * @dev Standard ERC223 function that will handle incoming token transfers.
- *
  * @param _from  Token sender address.
  * @param _value Amount of tokens.
  * @param _data  Transaction metadata.
