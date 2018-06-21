@@ -1,17 +1,15 @@
+pragma solidity ^0.4.24;
+
 /**
     This contract is used in testing PathToken' TransferAndCallback functionality
  */
 
-pragma solidity ^0.4.24;
-
 import "../token/TransferAndCallbackReceiver.sol";
-import "../PathToken.sol";
 
 contract ContractWithCallback is TransferAndCallbackReceiver {
-    PathToken public approvedToken;
-    uint256 public lastData;
+    address public approvedToken;
 
-    constructor (PathToken _approvedToken) public {
+    constructor (address _approvedToken) public {
         approvedToken = _approvedToken;
     }
 
@@ -22,7 +20,7 @@ contract ContractWithCallback is TransferAndCallbackReceiver {
     // Here we receive additional data as bytes type
     // and unpack into expected variables
     function balanceTransferred(address, uint256, bytes _data) public {
-        require(msg.sender == address(approvedToken));
+        require(msg.sender == approvedToken);
 
         uint256 btsptr;
         address _user;

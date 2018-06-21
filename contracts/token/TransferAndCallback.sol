@@ -2,10 +2,9 @@ pragma solidity ^0.4.24;
 
 import "./TransferAndCallbackInterface.sol";
 import "./TransferAndCallbackReceiver.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol";
 
-contract TransferAndCallback is BasicToken, TransferAndCallbackInterface {
+contract TransferAndCallback is ERC20Basic, TransferAndCallbackInterface {
 
 /**
      * @dev Transfer the specified amount of tokens to the specified address.
