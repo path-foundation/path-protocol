@@ -3,9 +3,14 @@ pragma solidity ^0.4.24;
 import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 import "openzeppelin-solidity/contracts/ownership/CanReclaimToken.sol";
 import "openzeppelin-solidity/contracts/ownership/HasNoEther.sol";
-import "./Deputable.sol";
+import "openzeppelin-solidity/contracts/ownership/Claimable.sol";
+import "./token/TransferAndCallback.sol";
 
-contract PathToken is StandardToken, CanReclaimToken, HasNoEther, Deputable {
+/**
+    PathToken is a standard ERC20 token with additional transfer function 
+    that notifies the receiving contract of the transfer.
+ */
+contract PathToken is StandardToken, TransferAndCallback, Claimable, CanReclaimToken, HasNoEther {
     string public name;
     string public symbol;
     uint8 public decimals;

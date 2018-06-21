@@ -1,8 +1,15 @@
 // Define these truffle-injected globals
 // so that eslint doesn't complain.
+
+const { sha256 } = require('js-sha256');
+const Web3 = require('web3');
+
+const web3 = new Web3();
+
 const { artifacts, contract, assert } = global;
 
 const PathToken = artifacts.require('PathToken');
+const ContractWithCallback = artifacts.require('ContractWithCallback');
 
 contract('PathToken', (accounts) => {
     let ownerAddress,
@@ -14,10 +21,6 @@ contract('PathToken', (accounts) => {
 
     before(async () => {
         [ownerAddress, tempOwnerAddress, user1Address, user2Address] = accounts;
-        // ownerAddress = accounts[0];
-        // tempOwnerAddress = accounts[1];
-        // user1Address = accounts[2];
-        // user2Address = accounts[3];
 
         instance = await PathToken.deployed();
 
@@ -37,7 +40,7 @@ contract('PathToken', (accounts) => {
             });
     });
 
-    describe('Test the Ownable interface', () => {
+    describe('Test the Claimable interface', () => {
         it('Test retrieving current owner', async () => {
             const owner = await instance.owner();
             assert.equal(owner, ownerAddress, 'Owner address shouls match the first account address');
@@ -45,7 +48,8 @@ contract('PathToken', (accounts) => {
 
         it('Test changing ownership', async () => {
             // Transfer the ownership
-            await instance.transferOwnership(tempOwnerAddress).then((tx) => {
+            await instance.transferOwnership(tempOwnerAddress);
+            await instance.claimOwnership({ from: tempOwnerAddress }).then((tx) => {
                 // Check for OwnershipTransferred event
                 assert.equal(1, tx.logs.length, 'There should be one OwnershipTransferred event');
                 assert.equal(ownerAddress, tx.logs[0].args.previousOwner);
@@ -58,6 +62,7 @@ contract('PathToken', (accounts) => {
 
         it('Test chaning ownership back to the original owner', async () => {
             await instance.transferOwnership(ownerAddress, { from: tempOwnerAddress });
+            await instance.claimOwnership({ from: ownerAddress });
             const owner = await instance.owner();
             assert.equal(owner, ownerAddress, 'Owner address shouls match the second account address');
         });
@@ -82,14 +87,6 @@ contract('PathToken', (accounts) => {
                 .catch(() => {
                     assert.ok(true);
                 });
-        });
-    });
-
-    describe('Test the deputable interface', () => {
-        it('Assign a deputy', async () => {
-            await instance.setDeputy(tempOwnerAddress, { from: ownerAddress });
-            const deputy = await instance.deputy();
-            assert.equal(deputy, tempOwnerAddress);
         });
     });
 
@@ -155,5 +152,32 @@ contract('PathToken', (accounts) => {
         const allowance = await instance.allowance(user1Address, ownerAddress);
 
         assert.ok(allowance.equals(467));
+    });
+
+    it('Test transfer with callback', async () => {
+        const contractWithCallback = await ContractWithCallback.new(instance.address);
+
+        const params = [
+            ownerAddress,
+            `0x${sha256('pubKey')}`,
+            `0x${sha256('certificateId')}`,
+        ];
+
+        const packedArgs = web3.eth.abi.encodeParameters(['address', 'bytes32', 'bytes32'], params);
+
+        await instance.transferAndCallback(contractWithCallback.address, 1000, packedArgs);
+
+        const balance = await instance.balanceOf(contractWithCallback.address);
+
+        // Cheeck contract's balance
+        assert.ok(balance.equals(1000));
+
+        const user = await contractWithCallback.user();
+        const seekerPublicKey = await contractWithCallback.seekerPublicKey();
+        const certificateId = await contractWithCallback.certificateId();
+
+        assert.equal(user, params[0], 'User address should match');
+        assert.equal(seekerPublicKey, params[1], 'Seeker\'s public key address should match');
+        assert.equal(certificateId, params[2], 'CertificateId address should match');
     });
 });

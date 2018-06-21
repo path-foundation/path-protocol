@@ -177,7 +177,7 @@ contract('Issuers', (accounts) => {
     it('Retrieving issuer with specified index', async () => {
         const issuer = await instance.getIssuerAtIndex(0);
         const address = issuer[0]; // 0xf17f52151ebef6c7334fad080c5704d77216b732
-        const name = web3.prototype.toAscii(issuer[1]).replace(/\u0000/g, ''); // MIT
+        const name = web3.utils.toAscii(issuer[1]).replace(/\u0000/g, ''); // MIT
         const status = issuer[2] * 1; // 1
         assert.equal(address, issuer1address, 'Should be uni1 address');
         assert.equal(name, issuer1name, 'Should be uni1 name');
