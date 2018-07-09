@@ -5,3 +5,6 @@ Sample use (from root folder):
 
 truffle-flattener ./contracts/PathToken.sol > ./flat/FlatPathToken.sol
 
+UPDATES:
+
+Last revision of FlatPathToken.sol deployed to main net
