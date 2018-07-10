@@ -1,5 +1,5 @@
 /* solium-disable security/no-block-members */
-pragma solidity ^0.4.23;
+pragma solidity ^0.4.24;
 
 import "./Deputable.sol";
 import "./Certificates.sol";

@@ -60,59 +60,46 @@ contract('Certificates', (accounts) => {
     });
 
     it('Check issuers contract', async () => {
-        const issuersAddress = await instance.getIssuersContract();
+        const issuersAddress = await instance.issuersContract();
         assert.equal(issuersAddress, issuers.address, 'Issuers address should match');
     });
 
     it('Add a user certificate', async () => {
         const certificateHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
-        const certificateId = `0x${sha256(sampleCertificateAWS.title)}`;
-        const { expires } = sampleCertificateAWS;
 
         const tx = await instance.addCertificate(
             user1address,
             certificateHash,
-            certificateId,
-            expires,
             { from: issuer1address }
         );
 
         const addr = getLogArgument(tx.logs, 'LogAddCertificate', '_userAddress');
-        const id = getLogArgument(tx.logs, 'LogAddCertificate', '_certificateId');
+        const hash = getLogArgument(tx.logs, 'LogAddCertificate', '_certificateHash');
 
         // Check event
         assert.equal(addr, user1address, 'User Certificate was Added.');
-        assert.equal(id, certificateId, 'User Certificate id should match.');
-
-        // Check that user is stored
-        const isUser = await instance.isUser(user1address);
-        assert.equal(isUser, true, 'User should exists at their address');
+        assert.equal(hash, certificateHash, 'User Certificate id should match.');
     });
 
     it('Add second user certificate for the same user', async () => {
         const certificateHash = `0x${sha256(JSON.stringify(sampleCertificateMS))}`;
-        const certificateId = `0x${sha256(sampleCertificateMS.title)}`;
-        const { expires } = sampleCertificateMS;
 
         const tx = await instance.addCertificate(
             user1address,
             certificateHash,
-            certificateId,
-            expires,
             { from: issuer2address }
         );
 
         const addr = getLogArgument(tx.logs, 'LogAddCertificate', '_userAddress');
-        const id = getLogArgument(tx.logs, 'LogAddCertificate', '_certificateId');
+        const hash = getLogArgument(tx.logs, 'LogAddCertificate', '_certificateHash');
 
         // Check event
-        assert.equal(addr, user1address, 'User address shoudl match');
-        assert.equal(id, certificateId, 'User Certificate id should match');
+        assert.equal(addr, user1address, 'User address should match');
+        assert.equal(hash, certificateHash, 'User Certificate hash should match');
     });
 
     it('Attempt to add a user certificate by unregistered Issuer', async () => {
         const certificateHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
-        const certificateId = `0x${sha256(sampleCertificateAWS.title)}`;
         const { expires } = sampleCertificateAWS;
 
         let error;
@@ -120,7 +107,6 @@ contract('Certificates', (accounts) => {
             await instance.addCertificate(
                 user1address,
                 certificateHash,
-                certificateId,
                 expires,
                 { from: unregisteredIssuer }
             );
@@ -132,29 +118,22 @@ contract('Certificates', (accounts) => {
     });
 
     it('Retrieving user certificate', async () => {
-        const certificateId = `0x${sha256(sampleCertificateAWS.title)}`;
-
         const testCertificateHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
-        const testExpires = sampleCertificateAWS.expires;
 
-        const [certHash, issuer, expiresOn] =
-            await instance.getCertificate(user1address, certificateId);
+        const [issuer, revoked] =
+            await instance.getCertificateMetadata(user1address, testCertificateHash);
 
-        assert.equal(certHash, testCertificateHash, 'Certificate hash should match');
-        assert.equal(issuer, issuer1address, 'Issuer shoudl match');
-        assert.equal(expiresOn.toNumber(), testExpires, 'Expiration date should match');
+        assert.equal(revoked, false, 'Certificate should not be revoked');
+        assert.equal(issuer, issuer1address, 'Issuer should match');
     });
 
     it('Attempt to retrieve a user certificate for a non-existing user', async () => {
-        const certificateId = `0x${sha256('something')}`;
+        const certificateHash = `0x${sha256('something')}`;
 
-        let error;
-        try {
-            await instance.getCertificate(user2address, certificateId);
-        } catch (e) {
-            error = e;
-        }
-        assert.ok(error instanceof Error);
+        const [issuer] =
+            await instance.getCertificateMetadata(user2address, certificateHash);
+
+        assert.ok(issuer, 0x0);
     });
 
     it('Get user certificate count', async () => {
@@ -162,54 +141,45 @@ contract('Certificates', (accounts) => {
         assert.equal(cnt.toNumber(), 2, 'Certificate count should be 1');
     });
 
-    it('Get user index', async () => {
-        const index = await instance.getUserIndex(user1address);
-        assert.equal(index, 0, 'User index should be 0');
+    it('Get user certificate at index that exists', async () => {
+        const [certificateHash, issuer, revoked] = await instance.getCertificateAt(user1address, 0);
+
+        const testHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
+
+        assert.equal(certificateHash, testHash, 'Certificate hash doesn\'t match');
+        assert.equal(issuer, issuer1address, 'Issuer should be issuer1');
+        assert.equal(revoked, false, 'Certificate shouldn\t be revoked');
     });
 
-    it('Get user address at index', async () => {
-        const addr = await instance.getUserAtIndex(0);
-        assert.equal(addr, user1address, 'User address should match');
+    it('Revoke user1 certificate', async () => {
+        const certificateHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
+
+        const i = await instance.getCertificateIndex(user1address, certificateHash);
+        const tx = await instance.revokeCertificate(user1address, i, { from: issuer1address });
+
+        const result =
+            await instance.getCertificateMetadata(user1address, certificateHash);
+
+        const revoked = result[1];
+
+        assert.equal(revoked, true, 'Certificate should be revoked');
+
+        const testAddress = getLogArgument(tx.logs, 'LogCertificateRevoked', '_userAddress');
+
+        assert.equal(user1address, testAddress, 'Event should contain user1 address');
     });
 
-    it('Get user count', async () => {
-        const cnt = await instance.getUserCount();
-        assert.equal(cnt, 1, 'User count should be 1');
-    });
+    it('Revoke user1 certificate by another issuer', async () => {
+        const certificateHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
 
-    it('Testing throwing require() in getUserIndex()', async () => {
-        let error;
+        const i = await instance.getCertificateIndex(user1address, certificateHash);
+
         try {
-            // Should throw as user 2 has not been added
-            await instance.getUserIndex(user2address);
-        } catch (err) {
-            error = err;
+            await instance.revokeCertificate(user1address, i, { from: issuer2address });
+            assert.equal(1, 2, 'Should not get here');
+        } catch (error) {
+            assert.ok(error instanceof Error);
         }
-
-        assert.ok(error instanceof Error);
-    });
-
-    it('Testing getting user at non-existing index', async () => {
-        let error;
-        try {
-            await instance.getUserAtIndex(10);
-        } catch (e) {
-            error = e;
-        }
-
-        assert.ok(error instanceof Error);
-    });
-
-    it('Testing throwing require() in getUserCertificateCount()', async () => {
-        let error;
-        try {
-            // Should throw as user 2 has not been added
-            await instance.getCertificateCount(user2address);
-        } catch (err) {
-            error = err;
-        }
-
-        assert.ok(error instanceof Error);
     });
 
     it('Testing echo', async () => {
