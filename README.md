@@ -8,21 +8,37 @@ PATH protocol smart contracts.
 
 ### How do I get set up? ###
 
+Prerequisites:
 * Install node.js ^7.7.3 and npm
 * Install truffle: npm install -g truffle
 * Install Ganache: http://truffleframework.com/ganache
 * Run Ganache
+* npm install -g truffle-flattener # Optional, if you want to flatten contracts
+* Solidity (by Juan Blanco) extension for VS Code # Optional
+
+Build:
+* https://github.com/path-foundation/path-protocol.git && cd path-protocol
+* npm install
 * truffle compile
 * truffle migrate
 * truffle test
-* npm install -g truffle-flattener
 
-If using VS Code, make sure you have the user setting "solidity.compileUsingRemoteVersion": "latest"
+If using VS Code, add the following user settings (Preferences -> Settings)
+
+```
+"solidity.compileUsingRemoteVersion": "latest"
+"solidity.packageDefaultDependenciesContractsDirectory": "",
+"solidity.packageDefaultDependenciesDirectory": "node_modules",
+```
 
 Also, truffle is sometimes lagging with ethereum compiler version included in it; 
 to upgrade etehreum compiler for your truffle install:
 
 `cd /Users/<username>/.local/share/npm/lib/node_modules/truffle`
+
+or (when using nvm as a node version manager)
+
+`cd /Users/<username>/.nvm/versions/node/v8.10.0/lib/node_modules/truffle`
 
 Then open `package.json`, change `solc` version to the desired one, save and run `npm install`.
 
