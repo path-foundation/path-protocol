@@ -60,7 +60,7 @@ contract('Certificates', (accounts) => {
     });
 
     it('Check issuers contract', async () => {
-        const issuersAddress = await instance.issuersContract();
+        const issuersAddress = await instance.getIssuersContract();
         assert.equal(issuersAddress, issuers.address, 'Issuers address should match');
     });
 
