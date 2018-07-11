@@ -78,9 +78,6 @@ contract Certificates is Deputable {
             _issuer = certs[uint(i)].issuer;
             _revoked = certs[uint(i)].revoked;
         }
-
-        // In case the cert not found, initial values will be returned, so the client should verify 
-        // that the return values are not initial ones. 
     }
 
     // We need the following two methods to be able to retrieve all certificate matadadat for a user

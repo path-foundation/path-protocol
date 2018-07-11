@@ -259,7 +259,7 @@ contract('Certificates', (accounts) => {
 
         try {
             await instance.revokeCertificate(user1address, i, { from: issuer2address });
-            assert.equal(1, 2, 'Should not get here');
+            assert.fail('Should not get here');
         } catch (error) {
             assert.ok(error instanceof Error);
         }
