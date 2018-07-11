@@ -26,9 +26,7 @@ contract('Certificates', (accounts) => {
         user1address,
         user2address,
         issuer1address,
-        issuer1name,
         issuer2address,
-        issuer2name,
         inactiveIssuer,
         unregisteredIssuer;
 
@@ -47,9 +45,6 @@ contract('Certificates', (accounts) => {
             unregisteredIssuer,
         ] = accounts;
 
-        issuer1name = 'Amazon';
-        issuer2name = 'Microsoft';
-
         issuers = await Issuers.new();
         instance = await Certificates.new(issuers.address);
 
@@ -57,9 +52,9 @@ contract('Certificates', (accounts) => {
         await instance.setIssuersContract(issuers.address, { from: ownerAddress });
 
         // Add issuers to issuers contract
-        await issuers.addIssuer(issuer1address, issuer1name, { from: ownerAddress });
-        await issuers.addIssuer(issuer2address, issuer2name, { from: ownerAddress });
-        await issuers.addIssuer(inactiveIssuer, 'inactive', { from: ownerAddress });
+        await issuers.addIssuer(issuer1address, { from: ownerAddress });
+        await issuers.addIssuer(issuer2address, { from: ownerAddress });
+        await issuers.addIssuer(inactiveIssuer, { from: ownerAddress });
         // decativate inactive issuer
         await issuers.removeIssuer(inactiveIssuer, { from: ownerAddress });
     });
