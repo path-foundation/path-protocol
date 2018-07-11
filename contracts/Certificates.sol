@@ -1,18 +1,11 @@
 pragma solidity ^0.4.24;
 
-
 import "./Deputable.sol";
-
 import "./Issuers.sol";
 
 /**
     This smart contract is used for storing Certificate information used for certificate validation.
     It doesn't store the certificate itself.
-
-    Certificates are issued by Issuers. Below if the overall architecture,
-    but only a part of it is on chain. Transfer of the certificate itself 
-    between Issuer and User is off chain and can be implemented various ways
-    depending on the Issuer and User client apps.
  */
 
 contract Certificates is Deputable {
@@ -20,18 +13,22 @@ contract Certificates is Deputable {
     mapping (address => Certificate[]) certificates;
 
     // Structure represents a single certificate metadata
-    // Size: 32x3 = 96 bytes
+    // Size: 32x2 = 64 bytes
     struct Certificate {
         // SHA256 hash of the certificate itself, used for validation of the certificate 
-        // by the Issuer once they receive it from the User
+        // by the Seeker once they receive it from the User
+        // This hash is also used as the certificate id
         bytes32 certificateHash; // 32 bytes
 
         address issuer; // 20 bytes
 
+        // Issuer has control over certificates issued by them - they can revoke them
+        // For example, if they found that a user was cheating on a test etc.
         bool revoked; // 1 byte
     }
 
     // Address of Issuers contract
+    // We need this for whitelisting issuers
     Issuers public issuersContract;
 
     // Owner and deputy can modify Issuers contract address (for upgrades etc)
@@ -46,32 +43,29 @@ contract Certificates is Deputable {
         issuersContract = _issuersContract; 
     }
 
-    // For debugging
-    function whoami() public view returns (address) {
-        return msg.sender;
-    }
-  
     function addCertificate(address _userAddress, bytes32 _certificateHash) public
-        returns(bool success) 
     {
         // Make sure the sender if a registered issuer
-        address issuerAddress = msg.sender;
-        require(issuersContract.getIssuerStatus(issuerAddress) == Issuers.IssuerStatus.Active); // require an active issuer
+        address issuer = msg.sender;
+
+        // require an active issuer
+        require(issuersContract.getIssuerStatus(issuer) == Issuers.IssuerStatus.Active);
 
         // Create the Certificate object
         Certificate memory cert = Certificate({
             certificateHash: _certificateHash,
-            issuer: issuerAddress,
+            issuer: issuer,
             revoked: false
         });
 
         certificates[_userAddress].push(cert);
 
-        emit LogAddCertificate(_userAddress, issuerAddress, _certificateHash);
-        
-        return true;
+        emit LogAddCertificate(_userAddress, issuer, _certificateHash);
     }
 
+    // Retrieve certificate metadata
+    // If the certificate with the provided user address and hash doesn't exist,
+    // then the return value _issuer will be 0x0
     function getCertificateMetadata(address _userAddress, bytes32 _certificateHash) public view
         returns (address _issuer, bool _revoked) {
         
@@ -89,7 +83,7 @@ contract Certificates is Deputable {
         // that the return values are not initial ones. 
     }
 
-    // We need teh following two methods to be able to retrieve all certificate matadadat for a user
+    // We need the following two methods to be able to retrieve all certificate matadadat for a user
     function getCertificateCount(address _user) public view returns(uint256) {
         return certificates[_user].length;
     }
@@ -97,11 +91,15 @@ contract Certificates is Deputable {
     function getCertificateAt(address _user, uint _index) public view 
         returns(bytes32 certificateHash, address issuer, bool revoked) {
         
-        Certificate storage cert = certificates[_user][_index];
+        Certificate[] storage certs = certificates[_user];
 
-        certificateHash = cert.certificateHash;
-        issuer = cert.issuer;
-        revoked = cert.revoked;
+        if (certs.length > _index) {
+            Certificate storage cert = certificates[_user][_index];
+
+            certificateHash = cert.certificateHash;
+            issuer = cert.issuer;
+            revoked = cert.revoked;
+        }
     }
 
     function getCertificateIndex(address _user, bytes32 _certificateHash) public view returns (int) {
@@ -123,11 +121,14 @@ contract Certificates is Deputable {
 
     //Revoke a certificate - only the issuer can revoke
     function revokeCertificate(address _user, uint certificateIndex) public {
-        address issuer = msg.sender;
+        address issuerAddress = msg.sender;
+
+        // require an active issuer
+        require(issuersContract.getIssuerStatus(issuerAddress) == Issuers.IssuerStatus.Active);
 
         Certificate storage cert = certificates[_user][certificateIndex];
 
-        require(issuer == cert.issuer, "Only a certificate issuer can revoke their certificate");
+        require(issuerAddress == cert.issuer, "Only a certificate issuer can revoke their certificate");
 
         cert.revoked = true;
 
