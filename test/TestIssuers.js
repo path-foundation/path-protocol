@@ -4,7 +4,6 @@
 const { artifacts, contract, assert } = global;
 
 const { getLogArgument } = require('./util/logs.js');
-const web3 = require('web3');
 
 const Issuers = artifacts.require('Issuers');
 
@@ -12,9 +11,7 @@ contract('Issuers', (accounts) => {
     let ownerAddress,
         tempOwnerAddress,
         deputyAddress,
-        issuer1address,
-        issuer1name,
-        issuer2address;
+        issuer1address;
 
     let instance;
 
@@ -24,10 +21,7 @@ contract('Issuers', (accounts) => {
             tempOwnerAddress,
             deputyAddress,
             issuer1address,
-            issuer2address,
         ] = accounts;
-
-        issuer1name = 'MIT';
 
         instance = await Issuers.new();
     });
@@ -113,79 +107,30 @@ contract('Issuers', (accounts) => {
     });
     // ------------------------
 
-    it('Attempting to remove a non-existing Issuer', async () => {
-        const tx = await instance.removeIssuer(issuer1address, { from: ownerAddress });
-        const status = getLogArgument(tx.logs, 'LogRemoveIssuer', '_status');
-        assert.equal(status, 1, 'Status should be 1 (NotFound)');
+    it('Removing a non-existing Issuer', async () => {
+        await instance.removeIssuer(issuer1address, { from: ownerAddress });
+        // Check Issuer status
+        assert.equal((await instance.getIssuerStatus.call(issuer1address)).toNumber(), 0, 'Issuer staus should be 0 (non-existing)');
     });
 
     it('Adding an Issuer', async () => {
-        // Add a uni
-        const tx = await instance.addIssuer(issuer1address, issuer1name, { from: ownerAddress });
-        assert.equal(getLogArgument(tx.logs, 'LogAddIssuer', '_status'), 0, 'Status should be 0 (Success)');
-
-        // Check total Issuers
-        assert.equal((await instance.getTotalIssuersCount()).toNumber(), 1, 'Total Issuers count should be 1');
-        // Check active Issuers
-        assert.equal((await instance.countActiveIssuers.call()).toNumber(), 1, 'Active Issuers count should be 1');
+        // Add an issuer
+        await instance.addIssuer(issuer1address, { from: ownerAddress });
         // Check Issuer status
         assert.equal((await instance.getIssuerStatus.call(issuer1address)).toNumber(), 1, 'Issuer staus should be 1 (active)');
     });
 
     it('Removing an existing Issuer', async () => {
-        const tx = await instance.removeIssuer(issuer1address, { from: ownerAddress });
-
-        // check the log event
-        assert.equal(getLogArgument(tx.logs, 'LogRemoveIssuer', '_status'), 0, 'Status should be 0 (Success)');
-
-        // Check total Issuers
-        assert.equal((await instance.getTotalIssuersCount()).toNumber(), 1, 'Total Issuers count should be 1');
-        // Check active Issuers
-        assert.equal((await instance.countActiveIssuers.call()).toNumber(), 0, 'Active Issuers count should be 0');
+        await instance.removeIssuer(issuer1address, { from: ownerAddress });
         // Check Issuer status
         assert.equal((await instance.getIssuerStatus.call(issuer1address)).toNumber(), 2, 'Issuer staus should be 2 (inactive)');
     });
 
-    it('Attempting to remove an already removed/inactive Issuer', async () => {
-        const tx = await instance.removeIssuer(issuer1address, { from: ownerAddress });
-
-        // check the log event
-        assert.equal(getLogArgument(tx.logs, 'LogRemoveIssuer', '_status'), 2, 'Status should be 2 (AlreadyInactive)');
-    });
-
-    it('Attempting to remove a non-existing Issuer', async () => {
-        const tx = await instance.removeIssuer(issuer2address, { from: ownerAddress });
-
-        // check the log event
-        assert.equal(getLogArgument(tx.logs, 'LogRemoveIssuer', '_status'), 1, 'Status should be 1 (NotFound)');
-    });
-
-    it('Attempting to re-add an existing inactive Issuer', async () => {
-        const tx = await instance.addIssuer(issuer1address, issuer1name, { from: ownerAddress });
-
-        // check the log event
-        assert.equal(getLogArgument(tx.logs, 'LogAddIssuer', '_status'), 0, 'Status should be 0 (Success)');
-    });
-
-    it('Attempting to re-add an existing active Issuer', async () => {
-        const tx = await instance.addIssuer(issuer1address, issuer1name, { from: ownerAddress });
-
-        // check the log event
-        assert.equal(getLogArgument(tx.logs, 'LogAddIssuer', '_status'), 1, 'Status should be 1 (AlreadyExists)');
-    });
-
-    it('Retrieving issuer with specified index', async () => {
-        const issuer = await instance.getIssuerAtIndex(0);
-        const address = issuer[0]; // 0xf17f52151ebef6c7334fad080c5704d77216b732
-        const name = web3.utils.toAscii(issuer[1]).replace(/\u0000/g, ''); // MIT
-        const status = issuer[2] * 1; // 1
-        assert.equal(address, issuer1address, 'Should be uni1 address');
-        assert.equal(name, issuer1name, 'Should be uni1 name');
-        assert.equal(status, 1, 'Status should be 1');
-    });
-
-    it('Testing echo', async () => {
-        const echoAddress = await instance.whoami();
-        assert.equal(echoAddress.toLowerCase(), ownerAddress.toLowerCase(), 'Sender address should match');
+    it('Re-adding an existing inactive Issuer', async () => {
+        // First, make sure the user is inactive
+        assert.equal((await instance.getIssuerStatus.call(issuer1address)).toNumber(), 2, 'Issuer staus should be 2 (inactive)');
+        await instance.addIssuer(issuer1address, { from: ownerAddress });
+        // Check Issuer status
+        assert.equal((await instance.getIssuerStatus.call(issuer1address)).toNumber(), 1, 'Issuer staus should be 1 (active)');
     });
 });
