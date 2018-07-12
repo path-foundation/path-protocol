@@ -127,8 +127,10 @@ contract('Issuers', (accounts) => {
     });
 
     it('Re-adding an existing inactive Issuer', async () => {
+        // First, make sure the user is inactive
+        assert.equal((await instance.getIssuerStatus.call(issuer1address)).toNumber(), 2, 'Issuer staus should be 2 (inactive)');
         await instance.addIssuer(issuer1address, { from: ownerAddress });
         // Check Issuer status
-        assert.equal((await instance.getIssuerStatus.call(issuer1address)).toNumber(), 1, 'Issuer staus should be 2 (active)');
+        assert.equal((await instance.getIssuerStatus.call(issuer1address)).toNumber(), 1, 'Issuer staus should be 1 (active)');
     });
 });
