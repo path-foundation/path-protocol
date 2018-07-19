@@ -9,12 +9,14 @@ PATH protocol smart contracts.
 ### How do I get set up? ###
 
 Prerequisites:
-* Install node.js ^7.7.3 and npm
+* Install node.js ^8.11.3 and npm
 * Install truffle: npm install -g truffle
 * Install Ganache: http://truffleframework.com/ganache
 * Run Ganache
 * npm install -g truffle-flattener # Optional, if you want to flatten contracts
 * Solidity (by Juan Blanco) extension for VS Code # Optional
+* For MacOS install command line tools, by running `xcode-select --install`
+* For Windows install build tools, by running `npm install -g windows-build-tools`
 
 Build:
 * https://github.com/path-foundation/path-protocol.git && cd path-protocol
@@ -26,7 +28,7 @@ Build:
 If using VS Code, add the following user settings (Preferences -> Settings)
 
 ```
-"solidity.compileUsingRemoteVersion": "latest"
+"solidity.compileUsingRemoteVersion": "latest",
 "solidity.packageDefaultDependenciesContractsDirectory": "",
 "solidity.packageDefaultDependenciesDirectory": "node_modules",
 ```
