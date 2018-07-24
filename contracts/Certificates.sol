@@ -12,13 +12,16 @@ contract Certificates is Deputable {
     // mapping of user addresses to array of their certificates
     mapping (address => Certificate[]) certificates;
 
+    // Array of all users in the system
+    address[] users;
+
     // Structure represents a single certificate metadata
     // Size: 32x2 = 64 bytes
     struct Certificate {
         // SHA256 hash of the certificate itself, used for validation of the certificate 
         // by the Seeker once they receive it from the User
         // This hash is also used as the certificate id
-        bytes32 certificateHash; // 32 bytes
+        bytes32 hash; // 32 bytes
 
         address issuer; // 20 bytes
 
@@ -36,43 +39,48 @@ contract Certificates is Deputable {
         issuersContract = Issuers(_issuersContract);
     }
 
-    event LogAddCertificate(address indexed _userAddress, address indexed _issuerAddress, bytes32 _certificateHash);
+    event LogAddCertificate(address indexed _user, address indexed _issuerAddress, bytes32 _hash);
 
     // Constructor
     constructor(Issuers _issuersContract) public {
         issuersContract = _issuersContract; 
     }
 
-    function addCertificate(address _userAddress, bytes32 _certificateHash) public
+    function addCertificate(address _user, bytes32 _hash) public
     {
         // Make sure the sender if a registered issuer
         address issuer = msg.sender;
+
+        // Add user to users array if it's the first certificate for the user
+        if (certificates[_user].length == 0) {
+            users.push(_user);
+        }
 
         // require an active issuer
         require(issuersContract.getIssuerStatus(issuer) == Issuers.IssuerStatus.Active);
 
         // Create the Certificate object
         Certificate memory cert = Certificate({
-            certificateHash: _certificateHash,
+            hash: _hash,
             issuer: issuer,
             revoked: false
         });
 
-        certificates[_userAddress].push(cert);
+        certificates[_user].push(cert);
 
-        emit LogAddCertificate(_userAddress, issuer, _certificateHash);
+        emit LogAddCertificate(_user, issuer, _hash);
     }
 
     // Retrieve certificate metadata
     // If the certificate with the provided user address and hash doesn't exist,
     // then the return value _issuer will be 0x0
-    function getCertificateMetadata(address _userAddress, bytes32 _certificateHash) public view
+    function getCertificateMetadata(address _user, bytes32 _hash) public view
         returns (address _issuer, bool _revoked) {
         
         // Get certificates array
-        Certificate[] storage certs = certificates[_userAddress];
+        Certificate[] storage certs = certificates[_user];
 
-        int i = getCertificateIndex(_userAddress, _certificateHash);
+        int i = getCertificateIndex(_user, _hash);
 
         if (i >= 0) {
             _issuer = certs[uint(i)].issuer;
@@ -86,27 +94,27 @@ contract Certificates is Deputable {
     }
 
     function getCertificateAt(address _user, uint _index) public view 
-        returns(bytes32 certificateHash, address issuer, bool revoked) {
+        returns(bytes32 hash, address issuer, bool revoked) {
         
         Certificate[] storage certs = certificates[_user];
 
         if (certs.length > _index) {
             Certificate storage cert = certificates[_user][_index];
 
-            certificateHash = cert.certificateHash;
+            hash = cert.hash;
             issuer = cert.issuer;
             revoked = cert.revoked;
         }
     }
 
-    function getCertificateIndex(address _user, bytes32 _certificateHash) public view returns (int) {
+    function getCertificateIndex(address _user, bytes32 _hash) public view returns (int) {
         Certificate[] storage certs = certificates[_user];
 
-        // Find certificate with certificateHash
+        // Find certificate by hash
         uint count = certs.length;
 
         for (uint i = 0; i < count; i++) {
-            if (certs[i].certificateHash == _certificateHash) {
+            if (certs[i].hash == _hash) {
                 return int(i);
             }
         }
@@ -114,7 +122,7 @@ contract Certificates is Deputable {
         return -1;
     }
 
-    event LogCertificateRevoked(address indexed _userAddress, bytes32 _certificateHash);
+    event LogCertificateRevoked(address indexed _user, bytes32 _hash);
 
     //Revoke a certificate - only the issuer can revoke
     function revokeCertificate(address _user, uint certificateIndex) public {
@@ -129,6 +137,6 @@ contract Certificates is Deputable {
 
         cert.revoked = true;
 
-        emit LogCertificateRevoked(_user, cert.certificateHash);
+        emit LogCertificateRevoked(_user, cert.hash);
     }
 }
