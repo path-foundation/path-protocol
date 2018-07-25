@@ -72,6 +72,28 @@ contract('Escrow', async (accounts) => {
         await token.transfer(seeker1, 1000 * 1000000, { from: owner });
     });
 
+    it('Attempt to refund available balance for seeker1', async () => {
+        const balanceSeeker1 = await token.balanceOf(seeker1);
+        const balanceEscrow = await token.balanceOf(escrow.address);
+
+        await token.approve(escrow.address, 42 * 1000000, { from: seeker1 });
+        await escrow.increaseAvailableBalance(42 * 1000000, { from: seeker1 });
+
+        const balanceSeeker1New = await token.balanceOf(seeker1);
+        const balanceEscrowNew = await token.balanceOf(escrow.address);
+
+        assert.equal(balanceSeeker1New.toNumber(), balanceSeeker1.toNumber() - (42 * 1000000));
+        assert.equal(balanceEscrowNew.toNumber(), balanceEscrow.toNumber() + (42 * 1000000));
+
+        await escrow.refundAvailableBalance({ from: seeker1 });
+
+        const balanceSeeker1Refund = await token.balanceOf(seeker1);
+        const balanceEscrowRefund = await token.balanceOf(escrow.address);
+
+        assert.equal(balanceSeeker1Refund.toNumber(), balanceSeeker1.toNumber());
+        assert.equal(balanceEscrowRefund.toNumber(), balanceEscrow.toNumber());
+    });
+
     it('Attempt to place a request by unregistered seeker2', async () => {
         try {
             await escrow.submitRequest(user1, cert1sha, { from: seeker2 });
@@ -106,6 +128,25 @@ contract('Escrow', async (accounts) => {
 
     it('Place a request by registered seeker1 with allowing funds transfer', async () => {
         await token.approve(escrow.address, 25 * 1000000, { from: seeker1 });
+        await escrow.submitRequest(user1, cert1sha, { from: seeker1 });
+
+        // Retrieve the request
+        const [seeker, status, hash, timestamp] =
+            await escrow.getDataRequestByHash(user1, cert1sha);
+
+        assert.equal(seeker, seeker1, 'Seeker should match');
+        assert.equal(status, 1, 'Status should be 1 (Initial)');
+        assert.equal(hash, cert1sha, 'Hash should match');
+
+        const ts = timestamp.toNumber();
+        const now = new Date().getTime() / 1000;
+
+        assert.ok(ts > now - 10, 'Hash should match');
+    });
+
+    it('Place a request by registered seeker1 which has available balance in escrow contract', async () => {
+        await token.approve(escrow.address, 25 * 1000000, { from: seeker1 });
+        await escrow.increaseAvailableBalance(25 * 1000000, { from: seeker1 });
         await escrow.submitRequest(user1, cert1sha, { from: seeker1 });
 
         // Retrieve the request

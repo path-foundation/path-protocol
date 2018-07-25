@@ -9,6 +9,7 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract PathToken {
     function allowance(address _owner, address _spender) external view returns (uint256 remaining);
+    function balanceOf(address _owner) public view returns (uint256);
     function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
     function transfer(address _to, uint256 _value) external returns (bool success);
     function increaseApproval(address _spender, uint _addedValue) external returns (bool);
