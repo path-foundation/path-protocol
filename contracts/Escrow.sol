@@ -3,6 +3,7 @@ pragma solidity ^0.4.24;
 
 import "./Deputable.sol";
 import "./Certificates.sol";
+import "./PublicKeys.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 
@@ -21,48 +22,40 @@ contract PathToken {
 contract Escrow is Deputable {
     using SafeMath for uint256;
 
-    // Certificates contact
+    // Contracts
     Certificates certificates;
+    PublicKeys publicKeys;
+
+    // Request price in PATH tokens
+    uint public tokensPerRequest; 
+    // Recentage of token reward going to the issuer, in percent, like 60(%)
+    uint public issuerReward;
 
     PathToken private token;
-    constructor(PathToken _token, Certificates _certificates) public {
+    constructor(PathToken _token, Certificates _certificates, PublicKeys _publicKeys) public {
         token = _token;
         certificates = _certificates;
+        publicKeys = _publicKeys;
         tokensPerRequest = 25 * 10 ** uint(token.decimals()); // 25 * 10^6 
+
+        // Issuer gets <issuerReward>%, user gets the rest
         issuerReward = 50;
     }
 
-    uint tokensPerRequest; 
     function setTokensPerRequest(uint _tokensPerRequest) external onlyOwnerOrDeputy {
-        // _tokensPerRequest is in display format (e.g. 25), i.e. has to be multiplied by 10^decimals
-        tokensPerRequest = _tokensPerRequest * 10 ** uint(token.decimals());
+        tokensPerRequest = _tokensPerRequest;
     }
 
-    // Recentage of token reward going to the issuer, in percent, like 60(%)
-    uint issuerReward;
     function setIssuerReward(uint _issuerReward) external onlyOwnerOrDeputy {
         issuerReward = _issuerReward;
     }
 
-    // Change the token contract address
     function setPathToken(PathToken _token) public onlyOwnerOrDeputy {
         token = _token;
     }
 
-    // Change the Certificates contract address
     function setCertificates(Certificates _certificates) public onlyOwnerOrDeputy {
         certificates = _certificates;
-    }
-
-    // Store of seeker public keys, so that we dont need to store them for each request
-    // TODO: Possibly put public keys into a separate contract
-    mapping (address => bytes) seekerPublicKeys;
-
-    // Seeker should add their public key to teh contract prior to sending any requests
-    function addSeekerPublicKey(bytes _publicKey) public {
-        // Make sure the seeker sends their own correct pblic key
-        require(address(keccak256(_publicKey)) == msg.sender);
-        seekerPublicKeys[msg.sender] = _publicKey;
     }
 
     // Seeker can top up their available balance
@@ -101,6 +94,7 @@ contract Escrow is Deputable {
     }
 
     enum RequestStatus {
+        None,
         // Initial status of a request
         Initial,
         // Request approved by the user, at this step an IPFS locator is included in the request
@@ -209,12 +203,12 @@ contract Escrow is Deputable {
         // Seeker's public key is expected to already be in seekerPublicKeys mapping
         // It gets there when a seeker is initialized in the app, 
         // by calling addSeekerPubKey()
-        require (seekerPublicKeys[seeker].length != 0, "Seeker is not registered");
+        require (publicKeys.publicKeyStore(seeker).length != 0, "Seeker is not registered");
 
         // First, check if seeker allowed this Escrow contract to transfer the payment 
         uint availableBalance = seekerAvailableBalance[seeker];
         uint allowance = token.allowance(seeker, this);
-        require (availableBalance >= tokensPerRequest || allowance >= tokensPerRequest);
+        require (availableBalance >= tokensPerRequest || allowance >= tokensPerRequest, "Insufficient balance");
 
         // We either take tokens from seeker's bank or transfer from their account
         if (availableBalance >= tokensPerRequest) {
