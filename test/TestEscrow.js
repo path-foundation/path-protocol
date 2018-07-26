@@ -59,10 +59,15 @@ contract('Escrow', async (accounts) => {
     const cert1 = JSON.stringify(cert(issuer1, user1, 'Ethereum professional'));
     const cert2 = JSON.stringify(cert(issuer2, user2, 'Bitcoin enthusiast'));
     const cert3 = JSON.stringify(cert(issuer2, user2, 'Blockchain professional - FAKE!'));
+    const cert4 = JSON.stringify(cert(issuer2, user2, 'The Real Blockchain professional'));
 
     const cert1sha = `0x${sha256(cert1)}`;
     const cert2sha = `0x${sha256(cert2)}`;
     const cert3sha = `0x${sha256(cert3)}`;
+    const cert4sha = `0x${sha256(cert4)}`;
+
+    const location1 = JSON.stringify({ filename: 'encryptedcert.cert', location: 'storage/filelocation' });
+    const location1sha = `0x${sha256(location1)}`;
 
     let token,
         certificates,
@@ -303,19 +308,68 @@ contract('Escrow', async (accounts) => {
     });
 
     it('User1 accepts/completes the request for cert2 initiated by seeker1', async () => {
+        await escrow.userCompleteRequest(cert2sha, location1sha, { from: user1 });
+        const [seeker, status, hash] =
+            await escrow.getDataRequestByHash(user1, cert2sha);
 
+        assert.equal(seeker, seeker1, 'Seeker should match');
+        assert.equal(status, RequestStatus.UserCompleted, 'Status should be 2 (UserCompleted)');
+        assert.equal(hash, cert2sha, 'Hash should match');
     });
 
     it('Seeker1 tries to cancel the request for cert2 that user1 has already accepted', async () => {
-
+        try {
+            await escrow.seekerCancelRequest(user1, cert2sha, { from: seeker1 });
+            assert.fail('Shouldn\'t be here');
+        } catch (error) {
+            assert.ok(true);
+        }
     });
 
     it('Seeker1 validates/completes the request for cert2', async () => {
+        await escrow.seekerCompleted(user1, cert2sha, { from: seeker1 });
+        const [seeker, status, hash] =
+            await escrow.getDataRequestByHash(user1, cert2sha);
 
+        // TODO: check balances of seeker, issuer and user
+        assert.equal(seeker, seeker1, 'Seeker should match');
+        assert.equal(status, RequestStatus.SeekerCompleted, 'Status should be 2 (UserCompleted)');
+        assert.equal(hash, cert2sha, 'Hash should match');
     });
 
     it('Seeker1 creates a request for cert4 from user2 and then cancels it before user2 completes it', async () => {
-        
+        const initialAvailableBalance = await escrow.seekerAvailableBalance(seeker1);
+        const initialInflightBalance = await escrow.seekerInflightBalance(seeker1);
+
+        await escrow.submitRequest(user2, cert4sha, { from: seeker1 });
+
+        const inprogressAvailableBalance = await escrow.seekerAvailableBalance(seeker1);
+        const inprogressInflightBalance = await escrow.seekerInflightBalance(seeker1);
+
+        const [seekerBefore, statusBefore] =
+            await escrow.getDataRequestByHash(user2, cert4sha);
+    
+        assert.equal(seekerBefore, seeker1, 'Seeker should match');
+        assert.equal(statusBefore, RequestStatus.Initial, 'Status should be 1 (Initial)');
+
+        await escrow.seekerCancelRequest(user2, cert4sha, { from: seeker1 });
+
+        const cancelledAvailableBalance = await escrow.seekerAvailableBalance(seeker1);
+        const cancelledInflightBalance = await escrow.seekerInflightBalance(seeker1);
+
+        const [seekerAfter, statusAfter, hash] =
+            await escrow.getDataRequestByHash(user2, cert4sha);
+
+        assert.equal(seekerAfter, seeker1, 'Seeker should match');
+        assert.equal(statusAfter, RequestStatus.SeekerCancelled, 'Status should be 6 (SeekerCancelled)');
+        assert.equal(hash, cert4sha, 'Hash should match');
+
+        // check balances
+        assert.equal(inprogressAvailableBalance, initialAvailableBalance - (inprogressInflightBalance - initialInflightBalance), 'inprogressAvailableBalance should be initialAvailableBalance minus the delta of inflight balances');
+        assert.ok(inprogressAvailableBalance.equals(initialAvailableBalance - requestPrice));
+        assert.ok(inprogressInflightBalance.equals(initialInflightBalance + requestPrice));
+        assert.ok(cancelledAvailableBalance.equals(initialAvailableBalance));
+        assert.ok(cancelledInflightBalance.equals(initialInflightBalance));
     });
 
     // it('', async () => {});

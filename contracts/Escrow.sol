@@ -304,7 +304,7 @@ contract Escrow is Deputable {
 
         DataRequest storage req = requests[_user][uint(i)];
 
-        require(req.status == RequestStatus.Initial, "Only requests in Initial state may be cancelled");
+        require(req.status == RequestStatus.UserCompleted, "Only requests in UserCompleted state may be completed by seeker");
 
         address issuer;
         bool revoked;
