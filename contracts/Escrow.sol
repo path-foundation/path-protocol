@@ -23,16 +23,28 @@ contract PathToken {
 contract Escrow is Deputable {
     using SafeMath for uint256;
 
-    // Contracts
-    Certificates certificates;
-    PublicKeys publicKeys;
+    // Certificates contract
+    Certificates public certificates;
 
-    // Request price in PATH tokens
+    // Public keys contract
+    PublicKeys public publicKeys;
+
+    // PathToken contract
+    PathToken public token;
+
+    // Cost of a request in PATH tokens
     uint public tokensPerRequest; 
     // Recentage of token reward going to the issuer, in percent, like 60(%)
     uint public issuerReward;
 
-    PathToken private token;
+    // Seeker's balance usable for new requests or refund
+    // Seeker can top off that balance to save on gas fees for every new request
+    // Also, funds from cancelled request go to this balance
+    mapping (address => uint) seekerAvailableBalance;
+
+    // Seeker's balance for requests currently in flight
+    mapping (address => uint) seekerInflightBalance;
+
     constructor(PathToken _token, Certificates _certificates, PublicKeys _publicKeys) public {
         token = _token;
         certificates = _certificates;
@@ -49,14 +61,6 @@ contract Escrow is Deputable {
 
     function setIssuerReward(uint _issuerReward) external onlyOwnerOrDeputy {
         issuerReward = _issuerReward;
-    }
-
-    function setPathToken(PathToken _token) public onlyOwnerOrDeputy {
-        token = _token;
-    }
-
-    function setCertificates(Certificates _certificates) public onlyOwnerOrDeputy {
-        certificates = _certificates;
     }
 
     // Seeker can top up their available balance
@@ -176,12 +180,6 @@ contract Escrow is Deputable {
             timestamp = req.timestamp;
         }
     }
-
-    // Seeker's balance usable for new requests or refund
-    mapping (address => uint) seekerAvailableBalance;
-
-    // Seeker's balance for requests currently in flight
-    mapping (address => uint) seekerInflightBalance;
 
     event RequestSubmitted(address indexed _user, address indexed _seeker, bytes32 _hash);
     event RequestDenied(address indexed _user, address indexed _seeker, bytes32 _hash);
