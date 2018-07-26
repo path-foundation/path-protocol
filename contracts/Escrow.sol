@@ -40,10 +40,10 @@ contract Escrow is Deputable {
     // Seeker's balance usable for new requests or refund
     // Seeker can top off that balance to save on gas fees for every new request
     // Also, funds from cancelled request go to this balance
-    mapping (address => uint) seekerAvailableBalance;
+    mapping (address => uint) public seekerAvailableBalance;
 
     // Seeker's balance for requests currently in flight
-    mapping (address => uint) seekerInflightBalance;
+    mapping (address => uint) public seekerInflightBalance;
 
     constructor(PathToken _token, Certificates _certificates, PublicKeys _publicKeys) public {
         token = _token;
@@ -99,20 +99,20 @@ contract Escrow is Deputable {
     }
 
     enum RequestStatus {
-        None,
+        None, // 0
         // Initial status of a request
-        Initial,
+        Initial, // 1
         // Request approved by the user, at this step an IPFS locator is included in the request
-        UserCompleted,
+        UserCompleted, // 2
         // Request is denied by the user, at this point Seeker's deposit becomes refundable
-        UserDenied,
+        UserDenied, // 3
         // Certificate is received by the Seeker and successfully verified against the certificate hash
-        SeekerCompleted,
+        SeekerCompleted, // 4
         // Certificate is received by the Seeker, but the hash doesnt match; 
         // TODO: some remediation action is needed here
-        SeekerFailed,
+        SeekerFailed, // 5
         // Request is cancelled by the Seeker - only possible if the request status is Initial
-        SeekerCancelled
+        SeekerCancelled // 6
     }
 
     struct DataRequest {
@@ -250,6 +250,10 @@ contract Escrow is Deputable {
 
         req.status = RequestStatus.UserDenied;
 
+        // Refund seeker tokens
+        seekerInflightBalance[req.seeker] = seekerInflightBalance[req.seeker].sub(tokensPerRequest);
+        seekerAvailableBalance[req.seeker] = seekerAvailableBalance[req.seeker].add(tokensPerRequest);
+        
         emit RequestDenied(user, req.seeker, _hash);
     }
 

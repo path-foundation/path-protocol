@@ -15,6 +15,18 @@ const { sha256 } = require('js-sha256');
 //const EthCrypto = require('eth-crypto');
 
 const decimals = 10 ** 6;
+const requestPrice = 30 * decimals;
+
+// Shoudl match RequestStatus enum in Escrow contract
+const RequestStatus = {
+    None: 0,
+    Initial: 1,
+    UserCompleted: 2,
+    UserDenied: 3,
+    SeekerCompleted: 4,
+    SeekerFailed: 5,
+    SeekerCancelled: 6,
+};
 
 // Public/private keys for mnemonic:
 // 'kiwi just service vital feature rural vibrant copy pledge useless fee forum'
@@ -77,9 +89,9 @@ contract('Escrow', async (accounts) => {
     });
 
     it('Setting tokens per request', async () => {
-        await escrow.setTokensPerRequest(30 * decimals, { from: owner });
+        await escrow.setTokensPerRequest(requestPrice, { from: owner });
 
-        assert.ok((await escrow.tokensPerRequest()).equals(30 * decimals), 'Tokens per request should match the set amount');
+        assert.ok((await escrow.tokensPerRequest()).equals(requestPrice), 'Tokens per request should match the set amount');
     });
 
     it('Setting issuer reward', async () => {
@@ -167,6 +179,11 @@ contract('Escrow', async (accounts) => {
         assert.equal(balanceEscrowRefund.toNumber(), balanceEscrow.toNumber());
     });
 
+    it('Attempt gettign a data request index by non-existing hash', async () => {
+        const i = await escrow.getDataRequestIndexByHash(user1, `0x${sha256('blah')}`);
+        assert.ok(i.equals(-1));
+    });
+
     it('Attempt to place a request by unregistered seeker2', async () => {
         try {
             await escrow.submitRequest(user1, cert1sha, { from: seeker2 });
@@ -187,7 +204,7 @@ contract('Escrow', async (accounts) => {
 
     it('Attempt placing a request for revoked certificate by registered seeker1', async () => {
         try {
-            await token.approve(escrow.address, 30 * 1000000, { from: seeker1 });
+            await token.approve(escrow.address, requestPrice, { from: seeker1 });
             await escrow.submitRequest(user2, cert3sha, { from: seeker1 });
             assert.fail('Shouldn\'t be here');
         } catch (error) {
@@ -196,7 +213,7 @@ contract('Escrow', async (accounts) => {
     });
 
     it('Place a request by registered seeker1 with allowing funds transfer', async () => {
-        await token.approve(escrow.address, 30 * 1000000, { from: seeker1 });
+        await token.approve(escrow.address, requestPrice, { from: seeker1 });
         await escrow.submitRequest(user1, cert1sha, { from: seeker1 });
 
         // Retrieve the request
@@ -204,7 +221,7 @@ contract('Escrow', async (accounts) => {
             await escrow.getDataRequestByHash(user1, cert1sha);
 
         assert.equal(seeker, seeker1, 'Seeker should match');
-        assert.equal(status, 1, 'Status should be 1 (Initial)');
+        assert.equal(status, RequestStatus.Initial, 'Status should be 1 (Initial)');
         assert.equal(hash, cert1sha, 'Hash should match');
 
         const ts = timestamp.toNumber();
@@ -213,24 +230,33 @@ contract('Escrow', async (accounts) => {
         assert.ok(ts > now - 10, 'Hash should match');
     });
 
-    it('Place a request by registered seeker1 which has available balance in escrow contract', async () => {
-        await token.approve(escrow.address, 30 * 1000000, { from: seeker1 });
+    it('Place a request by registered seeker1 that has available balance in the escrow contract', async () => {
+        await token.approve(escrow.address, requestPrice, { from: seeker1 });
         // Increatse seeker1's available balance
-        await escrow.increaseAvailableBalance(30 * 1000000, { from: seeker1 });
+        await escrow.increaseAvailableBalance(requestPrice, { from: seeker1 });
         await escrow.submitRequest(user1, cert2sha, { from: seeker1 });
 
-        // Retrieve the request
+        // Retrieve the request by hash
         const [seeker, status, hash, timestamp] =
             await escrow.getDataRequestByHash(user1, cert2sha);
 
         assert.equal(seeker, seeker1, 'Seeker should match');
-        assert.equal(status, 1, 'Status should be 1 (Initial)');
+        assert.equal(status, RequestStatus.Initial, 'Status should be 1 (Initial)');
         assert.equal(hash, cert2sha, 'Hash should match');
 
         const ts = timestamp.toNumber();
         const now = new Date().getTime() / 1000;
 
         assert.ok(ts > now - 10, 'Hash should match');
+
+        // Retrieve the request by index
+        const i = await escrow.getDataRequestIndexByHash(user1, cert2sha);
+        const [seekerI, statusI, hashI, timestampI] = await escrow.getDataRequestByIndex(user1, i);
+
+        assert.equal(seeker, seekerI, 'Seeker should match');
+        assert.ok(status.equals(statusI), 'Status should match');
+        assert.equal(hash, hashI, 'Hash should match');
+        assert.ok(timestamp.equals(timestampI), 'Timestamp should match');
     });
 
     it('Check number of requests for a user', async () => {
@@ -241,7 +267,27 @@ contract('Escrow', async (accounts) => {
         assert.ok(user2count.equals(0), 'User2 should have 0 requests');
     });
 
-    // it('', async () => {});
+    it('User attempts to deny a request for nonexisting hash', async () => {
+        try {
+            await escrow.userDenyRequest(`0x${sha256('blah')}`, { from: user1 });
+            assert.fail('Shouldn\'t be here');
+        } catch (error) {
+            assert.ok(true);
+        }
+    });
+
+    it('User1 denies the request for cert1, initiated by seeker1', async () => {
+        // Get seeker1 balance
+        const prevBalance = await escrow.seekerAvailableBalance(seeker1);
+        const prevInflightBalance = await escrow.seekerInflightBalance(seeker1);
+        await escrow.userDenyRequest(cert1sha, { from: user1 });
+        const newBalance = await escrow.seekerAvailableBalance(seeker1);
+        const newInflightBalance = await escrow.seekerInflightBalance(seeker1);
+
+        assert.ok(newBalance.equals(prevBalance + requestPrice), 'New avail balance should include the refund for denied request');
+        assert.ok(newInflightBalance.equals(prevInflightBalance - requestPrice), 'New inflight balance should exclude the refund for denied request');
+    });
+
     // it('', async () => {});
     // it('', async () => {});
     // it('', async () => {});
