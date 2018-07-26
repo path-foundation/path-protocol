@@ -17,6 +17,14 @@ const { sha256 } = require('js-sha256');
 const decimals = 10 ** 6;
 const requestPrice = 30 * decimals;
 
+const getBalance = (acct) =>
+    new Promise((resolve, reject) => {
+        Escrow.web3.eth.getBalance(acct, (error, balance) => {
+            if (error) reject(error);
+            else resolve(balance);
+        });
+    });
+
 // Shoudl match RequestStatus enum in Escrow contract
 const RequestStatus = {
     None: 0,
@@ -212,9 +220,15 @@ contract('Escrow', async (accounts) => {
         }
     });
 
-    it('Place a request by registered seeker1 with allowing funds transfer', async () => {
+    it('Place a request by registered seeker1 with allowing funds transfer and sending 1 ETH to user', async () => {
+        const userBalance = await getBalance(user1);
+
         await token.approve(escrow.address, requestPrice, { from: seeker1 });
-        await escrow.submitRequest(user1, cert1sha, { from: seeker1 });
+        await escrow.submitRequest(user1, cert1sha, { from: seeker1, value: 1 * (10 ** 18) });
+
+        const userNewBalance = await getBalance(user1);
+
+        assert.ok(userNewBalance.minus(userBalance).equals(1 * (10 ** 18)), 'User balance should increase');
 
         // Retrieve the request
         const [seeker, status, hash, timestamp] =
@@ -242,7 +256,7 @@ contract('Escrow', async (accounts) => {
 
         assert.equal(seeker, seeker1, 'Seeker should match');
         assert.equal(status, RequestStatus.Initial, 'Status should be 1 (Initial)');
-        assert.equal(hash, cert2sha, 'Hash should match');
+        assert.equal(hash, cert2sha, 'Hash should match the original hash');
 
         const ts = timestamp.toNumber();
         const now = new Date().getTime() / 1000;
@@ -286,6 +300,22 @@ contract('Escrow', async (accounts) => {
 
         assert.ok(newBalance.equals(prevBalance + requestPrice), 'New avail balance should include the refund for denied request');
         assert.ok(newInflightBalance.equals(prevInflightBalance - requestPrice), 'New inflight balance should exclude the refund for denied request');
+    });
+
+    it('User1 accepts/completes the request for cert2 initiated by seeker1', async () => {
+
+    });
+
+    it('Seeker1 tries to cancel the request for cert2 that user1 has already accepted', async () => {
+
+    });
+
+    it('Seeker1 validates/completes the request for cert2', async () => {
+
+    });
+
+    it('Seeker1 creates a request for cert4 from user2 and then cancels it before user2 completes it', async () => {
+        
     });
 
     // it('', async () => {});
