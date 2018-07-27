@@ -66,7 +66,7 @@ contract('Escrow', async (accounts) => {
     const cert3sha = `0x${sha256(cert3)}`;
     const cert4sha = `0x${sha256(cert4)}`;
 
-    const location1 = JSON.stringify({ filename: 'encryptedcert.cert', location: 'storage/filelocation' });
+    const location1 = 'SOME IPFS LOCTATION';
     const location1sha = `0x${sha256(location1)}`;
 
     let token,
@@ -317,6 +317,15 @@ contract('Escrow', async (accounts) => {
         assert.equal(hash, cert2sha, 'Hash should match');
     });
 
+    it('User1 attempts to complete the request for non-existing cert', async () => {
+        try {
+            await escrow.userCompleteRequest(`0x${sha256('blah')}`, location1sha, { from: user1 });
+            assert.fail('Shouldn\'t be here');
+        } catch (error) {
+            assert.ok(true);
+        }
+    });
+
     it('Seeker1 tries to cancel the request for cert2 that user1 has already accepted', async () => {
         try {
             await escrow.seekerCancelRequest(user1, cert2sha, { from: seeker1 });
@@ -337,6 +346,15 @@ contract('Escrow', async (accounts) => {
         assert.equal(hash, cert2sha, 'Hash should match');
     });
 
+    it('Seeker1 attempts to complete the request for a non-existing cert', async () => {
+        try {
+            await escrow.seekerCompleted(user1, `0x${sha256('blah')}`, { from: seeker1 });
+            assert.fail('Shoudln\'t be here');
+        } catch (error) {
+            assert.ok(true);
+        }
+    });
+
     it('Seeker1 creates a request for cert4 from user2 and then cancels it before user2 completes it', async () => {
         const initialAvailableBalance = await escrow.seekerAvailableBalance(seeker1);
         const initialInflightBalance = await escrow.seekerInflightBalance(seeker1);
@@ -348,7 +366,7 @@ contract('Escrow', async (accounts) => {
 
         const [seekerBefore, statusBefore] =
             await escrow.getDataRequestByHash(user2, cert4sha);
-    
+
         assert.equal(seekerBefore, seeker1, 'Seeker should match');
         assert.equal(statusBefore, RequestStatus.Initial, 'Status should be 1 (Initial)');
 
