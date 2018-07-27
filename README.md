@@ -13,6 +13,7 @@ Prerequisites:
 * Install truffle: npm install -g truffle
 * Install Ganache: http://truffleframework.com/ganache
 * Run Ganache
+    * In Ganache settings, set mnemonic to "kiwi just service vital feature rural vibrant copy pledge useless fee forum" - this is so that we can have hardcoded private keys in the tests (truffle doesn't give you an option to retrieve those)
 * npm install -g truffle-flattener # Optional, if you want to flatten contracts
 * Solidity (by Juan Blanco) extension for VS Code # Optional
 * For MacOS install command line tools, by running `xcode-select --install`

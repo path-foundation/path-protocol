@@ -7,12 +7,54 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Truffle test (debuggable)",
+            "name": "Truffle test (local)",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/node_modules/truffle-core/cli.js",
             "args": [
                 "test"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Truffle migrate (local)",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/node_modules/truffle-core/cli.js",
+            "args": [
+                "migrate"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Truffle test (Ropsten)",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/node_modules/truffle-core/cli.js",
+            "args": [
+                "test",
+                "loadtest/requests.js",
+                "--network=ropsten"
+            ],
+            "env": {
+                "INFURA_API_KEY": "${env:INFURA_API_KEY}",
+                "INFURA_MNEMONIC": "${env:INFURA_MNEMONIC}"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Truffle exec (Ropsten)",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/node_modules/truffle-core/cli.js",
+            "args": [
+                "exec",
+                "loadtest/requests.js",
+                "--network=ropsten"
+            ],
+            "env": {
+                "INFURA_API_KEY": "${env:INFURA_API_KEY}",
+                "INFURA_MNEMONIC": "${env:INFURA_MNEMONIC}"
+            }
         }
     ]
 }

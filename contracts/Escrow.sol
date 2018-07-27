@@ -3,9 +3,13 @@ pragma solidity ^0.4.24;
 
 import "./Deputable.sol";
 import "./Certificates.sol";
+import "./PublicKeys.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+
 
 contract PathToken {
     function allowance(address _owner, address _spender) external view returns (uint256 remaining);
+    function balanceOf(address _owner) public view returns (uint256);
     function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
     function transfer(address _to, uint256 _value) external returns (bool success);
     function increaseApproval(address _spender, uint _addedValue) external returns (bool);
@@ -17,121 +21,305 @@ contract PathToken {
     Contract serves as a queue of requests and an escrow of payments (or refunds).
  */
 contract Escrow is Deputable {
-    constructor(PathToken _token, Certificates _certificatesContract) public {
+    using SafeMath for uint256;
+
+    // Certificates contract
+    Certificates public certificates;
+
+    // Public keys contract
+    PublicKeys public publicKeys;
+
+    // PathToken contract
+    PathToken public token;
+
+    // Cost of a request in PATH tokens
+    uint public tokensPerRequest; 
+    // Recentage of token reward going to the issuer, in percent, like 60(%)
+    uint public issuerReward;
+
+    // Seeker's balance usable for new requests or refund
+    // Seeker can top off that balance to save on gas fees for every new request
+    // Also, funds from cancelled request go to this balance
+    mapping (address => uint) public seekerAvailableBalance;
+
+    // Seeker's balance for requests currently in flight
+    mapping (address => uint) public seekerInflightBalance;
+
+    constructor(PathToken _token, Certificates _certificates, PublicKeys _publicKeys) public {
         token = _token;
-        certificatesContract = _certificatesContract;
-        acceptsRequests = true;
+        certificates = _certificates;
+        publicKeys = _publicKeys;
         tokensPerRequest = 25 * 10 ** uint(token.decimals()); // 25 * 10^6 
+
+        // Issuer gets <issuerReward>%, user gets the rest
+        issuerReward = 50;
     }
 
-    uint tokensPerRequest; 
     function setTokensPerRequest(uint _tokensPerRequest) external onlyOwnerOrDeputy {
-        // _tokensPerRequest is in display format (e.g. 25), i.e. has to be multiplied by 10^decimals
-        tokensPerRequest = _tokensPerRequest * 10 ** uint(token.decimals());
+        tokensPerRequest = _tokensPerRequest;
     }
 
-    // We need a way to disable new requests, like in cause of a migration/upgrade
-    bool acceptsRequests;
-    function setAcceptsRequests(bool _accepts) public onlyOwnerOrDeputy {
-        acceptsRequests = _accepts;
+    function setIssuerReward(uint _issuerReward) external onlyOwnerOrDeputy {
+        issuerReward = _issuerReward;
     }
 
-    // Change the token contract address
-    PathToken private token;
-    function setPathToken(PathToken _token) public onlyOwnerOrDeputy {
-        token = _token;
+    // Seeker can top up their available balance
+    // They could do that to save on gas - they won't need to sped gas on transferring tokens for each request
+    function increaseAvailableBalance(uint amount) public {
+        address seeker = msg.sender;
+        
+        // Make sure seeker allowed transferrign the tokens
+        require(token.allowance(seeker, this) >= amount);
+
+        // transfer tokens from seeker's account
+        token.transferFrom(seeker, this, amount);
+
+        // Increase seeker's available balance
+        seekerAvailableBalance[seeker] = seekerAvailableBalance[seeker].add(amount);
     }
 
-    Certificates certificatesContract;
-    function setCertificatesContract(Certificates _certificatesContract) public onlyOwnerOrDeputy {
-        certificatesContract = _certificatesContract;
+    // Seeker can refund their available balance 
+    function refundAvailableBalance() public {
+        address seeker = msg.sender;
+        uint balance = seekerAvailableBalance[seeker];
+        
+        require(balance > 0);
+
+        seekerAvailableBalance[seeker] = 0;
+        token.transfer(seeker, balance);
     }
 
+    function refundAvailableBalanceAdmin(address seeker) public onlyOwnerOrDeputy {
+        uint balance = seekerAvailableBalance[seeker];
+        
+        require(balance > 0);
 
-    // Seeker posted the request
-    uint8 public constant REQUEST_STATUS_PENDING = 0; 
-     // User picked up the request
-    uint8 public constant REQUEST_STATUS_PROCESSING = 1;
-    // User processed the request and posted the cert locator
-    uint8 public constant REQUEST_STATUS_PROCESSED = 2; 
-    // Seeker confirmed that they have received the certificate; 
-    // at this point tokens are distributed between the user and issuers
-    uint8 public constant REQUEST_STATUS_CONFIRMED = 3;
-    // User failed to process the request - refundable
-    uint8 public constant REQUEST_STATUS_FAILED = 4; 
-    // Seeker recalled the request before the user picked it up
-    uint8 public constant REQUEST_STATUS_RECALLED = 5; 
+        seekerAvailableBalance[seeker] = 0;
+        token.transfer(seeker, balance);
+    }
+
+    enum RequestStatus {
+        None, // 0
+        // Initial status of a request
+        Initial, // 1
+        // Request approved by the user, at this step an IPFS locator is included in the request
+        UserCompleted, // 2
+        // Request is denied by the user, at this point Seeker's deposit becomes refundable
+        UserDenied, // 3
+        // Certificate is received by the Seeker and successfully verified against the certificate hash
+        SeekerCompleted, // 4
+        // Certificate is received by the Seeker, but the hash doesnt match; 
+        // TODO: some remediation action is needed here
+        SeekerFailed, // 5
+        // Request is cancelled by the Seeker - only possible if the request status is Initial
+        SeekerCancelled // 6
+    }
 
     struct DataRequest {
-        // Seeker, information requestor
-        address seeker;
-        // Seeker's public key
-        bytes32 publicKey; 
+        address seeker; // 20
         // Request status
-        uint8 status; // one of the REQUEST_STATUS_*** constants
-        // The date the request was submtted
-        uint requestDate;
+        RequestStatus status; // 1
+        // Certificate hash
+        bytes32 hash; // 32
+        // The date the request was submitted
+        uint48 timestamp; // 6
+        // Certificate locator, set by the user on 'UserComplete' call
+        bytes32 locatorHash; // 32
     }
 
     // Mapping of users (address) to arrays of requests 
     mapping (address => DataRequest[]) requests;
 
-    // Mappign of users to the index of the next request to process in user's DataRequest[] array
-    mapping (address => uint) nextRequestIndices;
+    // Retrurn the count of all requests for a user
+    function getDataRequestCount(address _user) public view returns (uint) {
+        return requests[_user].length;
+    }
 
-    // Seeker's (address) balance (uint) on this escrow contract
-    mapping (address => uint) seekerBalance;
+    // Retrieve a request by its index in the user's requests array
+    function getDataRequestByIndex(address _user, uint i) public view 
+        returns (address seeker, RequestStatus status, bytes32 hash, uint48 timestamp) {
+        
+        DataRequest[] storage reqs = requests[_user];
 
-    // 1. Seeker places a request for user's background check
-    // This call has to be initiated by the seeker, i.e. msg.sender = seeker
-    function submitRequestForData(address _user, bytes32 _seekerPublicKey) public {
-        require(acceptsRequests);
+        // Make sure the index is less than the length of the array
+        if(reqs.length > i) {
+            seeker = reqs[i].seeker;
+            status = reqs[i].status;
+            hash = reqs[i].hash;
+            timestamp = reqs[i].timestamp;
+        }
+
+        return;
+    }
+
+    function getDataRequestIndexByHash(address _user, bytes32 _hash) public view
+        returns (int) {
+        DataRequest[] storage reqs = requests[_user];
+    
+        for (uint i = 0; i < reqs.length; i ++) {
+            if (reqs[i].hash == _hash) {
+                return int(i);
+            }
+        }
+
+        return -1;
+    }
+
+    // 
+    function getDataRequestByHash(address _user, bytes32 _hash) public view 
+        returns (address seeker, RequestStatus status, bytes32 hash, uint48 timestamp) {
+        
+        int i = getDataRequestIndexByHash(_user, _hash);
+
+        if (i >= 0) {
+            DataRequest storage req = requests[_user][uint(i)];
+
+            seeker = req.seeker;
+            status = req.status;
+            hash = req.hash;
+            timestamp = req.timestamp;
+        }
+    }
+
+    event RequestSubmitted(address indexed _user, address indexed _seeker, bytes32 _hash);
+    event RequestDenied(address indexed _user, address indexed _seeker, bytes32 _hash);
+    event RequestCompleted(address indexed _user, address indexed _seeker, bytes32 _hash);
+
+    // Seeker places the request for a user's certificate with provided hash 
+    // Seeker can optionally send some ETH to cover User's gas for User's interaction with the contract
+    // NOTE: Seeker can first check if the certificate is revoked (before submitting a request), 
+    // by calling Certificates.getCertificateMetadata - 
+    // this will save gas for the call below if the cert is revoked
+    function submitRequest(address _user, bytes32 _hash) public payable {
+        // Check to make sure the cert is not revoked
+        address issuer;
+        bool revoked;
+        (issuer, revoked) = certificates.getCertificateMetadata(_user, _hash);
+        require(revoked == false, "Requested certificate has been revoked");
 
         address seeker = msg.sender;
 
-        // TODO: check Certification contract to see if the user has any certificates
+        // Seeker's public key is expected to already be in seekerPublicKeys mapping
+        // It gets there when a seeker is initialized in the app, 
+        // by calling addSeekerPubKey()
+        require (publicKeys.publicKeyStore(seeker).length != 0, "Seeker is not registered");
 
         // First, check if seeker allowed this Escrow contract to transfer the payment 
+        uint availableBalance = seekerAvailableBalance[seeker];
         uint allowance = token.allowance(seeker, this);
-        require (allowance >= tokensPerRequest);
+        require (availableBalance >= tokensPerRequest || allowance >= tokensPerRequest, "Insufficient balance");
 
-        // Now, transfer the tokens from the seeker to this contract and make a note
-        token.transferFrom(seeker, this, tokensPerRequest);
-        // Incraese seeker's balance on the escrow
-        seekerBalance[seeker] += tokensPerRequest;
+        // We either take tokens from seeker's bank or transfer from their account
+        if (availableBalance >= tokensPerRequest) {
+            seekerAvailableBalance[seeker] = seekerAvailableBalance[seeker].sub(tokensPerRequest);
+            seekerInflightBalance[seeker] = seekerInflightBalance[seeker].add(tokensPerRequest);
+        } else {
+            token.transferFrom(seeker, this, tokensPerRequest);
+            seekerInflightBalance[seeker] = seekerInflightBalance[seeker].add(tokensPerRequest);
+        }
 
         DataRequest memory request = DataRequest({
-            seeker: seeker,
-            publicKey: _seekerPublicKey,
-            status: REQUEST_STATUS_PENDING,
-            requestDate: block.timestamp
+            seeker : seeker,
+            status : RequestStatus.Initial,
+            hash : _hash,
+            timestamp: uint48(block.timestamp),
+            locatorHash: 0
         });
 
-        // Adding the new request
         requests[_user].push(request);
+
+        emit RequestSubmitted(_user, seeker, _hash);
+
+        // If seeker sent some eth along the way, transfer eth to the user
+        if (msg.value > 0) {
+            _user.transfer(msg.value);
+        }
     }
 
-    // 2. User polls for the next request - gets the seeker address, public key and request index
-    // Note: this function modifies the status of the retrieved request to REQUEST_STATUS_PROCESSING
-    function retrieveNextRequestForData() public returns (address, bytes32, uint) {
+    // User denied the request
+    function userDenyRequest(bytes32 _hash) public {
         address user = msg.sender;
-        uint currentIndex = nextRequestIndices[user];
 
-        DataRequest storage request = requests[user][currentIndex];
-        request.status = REQUEST_STATUS_PROCESSING;
+        int i = getDataRequestIndexByHash(user, _hash);
 
-        // Bump the index to the next request
-        nextRequestIndices[user] += 1;
+        require(i >= 0, "Data request not found for the hash provided");
 
-        return (request.seeker, request.publicKey, currentIndex);
+        DataRequest storage req = requests[user][uint(i)];
+
+        require(req.status == RequestStatus.Initial, "Incorrect status");
+
+        req.status = RequestStatus.UserDenied;
+
+        // Refund seeker tokens
+        seekerInflightBalance[req.seeker] = seekerInflightBalance[req.seeker].sub(tokensPerRequest);
+        seekerAvailableBalance[req.seeker] = seekerAvailableBalance[req.seeker].add(tokensPerRequest);
+        
+        emit RequestDenied(user, req.seeker, _hash);
     }
 
+    function userCompleteRequest(bytes32 _hash, bytes32 _locatorHash) public {
+        address user = msg.sender;
 
-    // 3. User provides the list of certificate locators encrypted with the seeker's public key
-    // This changes the status of the request to REQUEST_STATUS_PROCESSED and triggers a payment
-    // to all involved parties (user + issuers)
-    // function submitResponse(uint requestIndex, bytes[] response) public {
+        int i = getDataRequestIndexByHash(user, _hash);
 
-    // }
+        require(i >= 0, "Data request not found for the hash provided");
 
+        DataRequest storage req = requests[user][uint(i)];
+
+        require(req.status == RequestStatus.Initial, "Incorrect status");
+
+        req.locatorHash = _locatorHash;
+        req.status = RequestStatus.UserCompleted;
+
+        emit RequestCompleted(user, req.seeker, _hash);
+    }
+
+    // Seeker can cancel a request that is still in Initial state
+    function seekerCancelRequest(address _user, bytes32 _hash) public {
+        address seeker = msg.sender;
+
+        int i = getDataRequestIndexByHash(_user, _hash);
+
+        require(i >= 0, "Data request not found for the hash provided");
+
+        DataRequest storage req = requests[_user][uint(i)];
+
+        require(req.status == RequestStatus.Initial, "Only requests in Initial state may be cancelled");
+
+        req.status = RequestStatus.SeekerCancelled;
+
+        require(seekerInflightBalance[seeker] >= tokensPerRequest);
+
+        seekerInflightBalance[seeker] = seekerInflightBalance[seeker].sub(tokensPerRequest);
+        seekerAvailableBalance[seeker] = seekerAvailableBalance[seeker].add(tokensPerRequest);
+    }
+
+    // Seeker received the certificate and successfully verified it against the hash
+    function seekerCompleted(address _user, bytes32 _hash) public {
+        address seeker = msg.sender;
+
+        int i = getDataRequestIndexByHash(_user, _hash);
+
+        require(i >= 0, "Data request not found for the hash provided");
+
+        DataRequest storage req = requests[_user][uint(i)];
+
+        require(req.status == RequestStatus.UserCompleted, "Only requests in UserCompleted state may be completed by seeker");
+
+        address issuer;
+        bool revoked;
+
+        (issuer, revoked) = certificates.getCertificateMetadata(_user, _hash);
+
+        seekerInflightBalance[seeker] = seekerInflightBalance[seeker].sub(tokensPerRequest);
+
+        uint issuerRewardTokens = tokensPerRequest.mul(issuerReward).div(100);
+        uint userReward = tokensPerRequest - issuerRewardTokens;
+
+        token.transfer(issuer, issuerReward);
+
+        token.transfer(_user, userReward);
+
+        req.status = RequestStatus.SeekerCompleted;
+    }
 }
