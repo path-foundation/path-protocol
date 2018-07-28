@@ -19,6 +19,18 @@ Prerequisites:
 * For MacOS install command line tools, by running `xcode-select --install`
 * For Windows install build tools, by running `npm install -g windows-build-tools`
 
+Prereqs for building documentation:
+* Install solc (native):
+    * Mac:
+        * brew update
+        * brew upgrade
+        * brew tap ethereum/ethereum
+        * brew install solidity
+    * Ubuntu:
+        * sudo add-apt-repository ppa:ethereum/ethereum -y
+        * sudo apt-get update
+        * sudo apt-get install solc
+
 Build:
 * https://github.com/path-foundation/path-protocol.git && cd path-protocol
 * npm install

@@ -3,20 +3,18 @@ pragma solidity ^0.4.24;
 import "./Deputable.sol";
 import "./Issuers.sol";
 
-/**
-    This smart contract is used for storing Certificate information used for certificate validation.
-    It doesn't store the certificate itself.
- */
-
+/// @title The store of certificate hashes per user
+/// @author Path Foundation
+/// @notice The contract is used by Issuers when submitting certificates and 
+/// by Seekers when verifying a certificate received from a User
 contract Certificates is Deputable {
-    // mapping of user addresses to array of their certificates
+    /// @notice mapping of user addresses to array of their certificates
     mapping (address => Certificate[]) certificates;
 
-    // Array of all users in the system
-    address[] users;
+    /// @title Array of all user addresses in the system
+    address[] public users;
 
-    // Structure represents a single certificate metadata
-    // Size: 32x2 = 64 bytes
+    /// @title Structure represents a single certificate metadata
     struct Certificate {
         // SHA256 hash of the certificate itself, used for validation of the certificate 
         // by the Seeker once they receive it from the User
@@ -30,11 +28,11 @@ contract Certificates is Deputable {
         bool revoked; // 1 byte
     }
 
-    // Address of Issuers contract
-    // We need this for whitelisting issuers
+    /// @notice Title Address of Issuers contract.
+    /// We use this for getting whitelisted issuers
     Issuers public issuersContract;
 
-    // Owner and deputy can modify Issuers contract address (for upgrades etc)
+    /// @notice Owner and deputy can modify Issuers contract address (for upgrades etc)
     function setIssuersContract(Issuers _issuersContract) public onlyOwnerOrDeputy {
         issuersContract = Issuers(_issuersContract);
     }
@@ -46,6 +44,8 @@ contract Certificates is Deputable {
         issuersContract = _issuersContract; 
     }
 
+    /// @notice Add a certificate
+    /// @dev Can only be called by active issuers (addresses in Issuers contract with status = Active)
     function addCertificate(address _user, bytes32 _hash) public
     {
         // Make sure the sender if a registered issuer
@@ -71,8 +71,8 @@ contract Certificates is Deputable {
         emit LogAddCertificate(_user, issuer, _hash);
     }
 
-    // Retrieve certificate metadata
-    // If the certificate with the provided user address and hash doesn't exist,
+    /// @notice Retrieve certificate metadata
+    /// @dev If the certificate with the provided user address and hash doesn't exist,
     // then the return value _issuer will be 0x0
     function getCertificateMetadata(address _user, bytes32 _hash) public view
         returns (address _issuer, bool _revoked) {
