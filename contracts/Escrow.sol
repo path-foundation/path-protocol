@@ -5,17 +5,7 @@ import "./Deputable.sol";
 import "./Certificates.sol";
 import "./PublicKeys.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-
-
-contract PathToken {
-    function allowance(address _owner, address _spender) external view returns (uint256 remaining);
-    function balanceOf(address _owner) public view returns (uint256);
-    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
-    function transfer(address _to, uint256 _value) external returns (bool success);
-    function increaseApproval(address _spender, uint _addedValue) external returns (bool);
-    function decreaseApproval(address _spender, uint _subtractedValue) external returns (bool);
-    uint8 public decimals;
-}
+import "./PathToken.sol";
 
 /**
     Contract serves as a queue of requests and an escrow of payments (or refunds).
