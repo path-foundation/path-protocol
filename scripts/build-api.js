@@ -2,12 +2,15 @@
 const shell = require('shelljs');
 const Mustache = require('mustache');
 const fs = require('fs');
+const parseNatspec = require('./parse-natspec');
 
 const cmd = 'solc   --pretty-json   --allow-paths ./contracts   --combined-json abi,ast,compact-format,devdoc,hashes,interface,metadata,opcodes,srcmap,srcmap-runtime,userdoc   openzeppelin-solidity=/Users/leyboan1/dev/cry/path-protocol/node_modules/openzeppelin-solidity $(find ./contracts -type f -name "*.sol"  -not -path "*token/*" -not -path "*test/*")';
 
-console.log(cmd);
+//console.log(cmd);
 
 const json = JSON.parse(shell.exec(cmd, { silent: true }).stdout);
+
+//fs.writeFileSync('./docs/abi.json', JSON.stringify(json, null, 2));
 
 const excludeContracts = [
     'PathToken',
@@ -26,7 +29,7 @@ Object.keys(json.contracts).forEach(cname => {
     // Contract name
     const contractName = cname.split(':')[1];
     // File name
-    //const sourceName = cname.split(':')[0];
+    const sourceName = cname.split(':')[0];
 
     if (excludeContracts.includes(contractName)) return;
 
@@ -81,12 +84,24 @@ Object.keys(json.contracts).forEach(cname => {
 
     const contract = {
         name: contractName,
-        desc: '',
+        doc: {},
         funcs,
     };
     contracts.push(contract);
 
-    //const source = json.sources[sourceName];
+    const source = json.sources[sourceName];
+    if (source) {
+        const src = source.AST.nodes.find(node => node.nodeType === 'ContractDefinition' && node.name === contractName);
+        if (src) {
+            const doc = parseNatspec(src.documentation);
+            contract.doc = {
+                title: doc.title,
+                notice: doc.notice,
+                titleExists: !!doc.title,
+                noticeExists: !!doc.notice,
+            };
+        }
+    }
 });
 
 const contractsData = { contracts };
@@ -99,4 +114,4 @@ const md = Mustache.render(template.toString(), contractsData);
 
 fs.writeFileSync('docs/api.md', md);
 
-console.log(md);
+//console.log(md);

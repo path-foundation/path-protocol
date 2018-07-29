@@ -1,6 +1,6 @@
 ## Smart contracts
 
-- ### [Certificates](#Certificates)
+- ### [`Certificates`](#Certificates)
     * [**`addCertificate(address _user, bytes32 _hash)`**](#addcertificateaddress-_user-bytes32-_hash)
     * [**`deputy()`**](#deputy)
     * [**`getCertificateAt(address _user, uint256 _index)`**](#getcertificateataddress-_user-uint256-_index)
@@ -15,7 +15,7 @@
     * [**`setIssuersContract(address _issuersContract)`**](#setissuerscontractaddress-_issuerscontract)
     * [**`transferOwnership(address _newOwner)`**](#transferownershipaddress-_newowner)
     * [**`users(uint256 )`**](#usersuint256-)
-- ### [Escrow](#Escrow)
+- ### [`Escrow`](#Escrow)
     * [**`certificates()`**](#certificates)
     * [**`deputy()`**](#deputy)
     * [**`getDataRequestByHash(address _user, bytes32 _hash)`**](#getdatarequestbyhashaddress-_user-bytes32-_hash)
@@ -42,7 +42,7 @@
     * [**`transferOwnership(address _newOwner)`**](#transferownershipaddress-_newowner)
     * [**`userCompleteRequest(bytes32 _hash, bytes32 _locatorHash)`**](#usercompleterequestbytes32-_hash-bytes32-_locatorhash)
     * [**`userDenyRequest(bytes32 _hash)`**](#userdenyrequestbytes32-_hash)
-- ### [Issuers](#Issuers)
+- ### [`Issuers`](#Issuers)
     * [**`addIssuer(address _issuerAddress)`**](#addissueraddress-_issueraddress)
     * [**`deputy()`**](#deputy)
     * [**`getIssuerStatus(address _issuerAddress)`**](#getissuerstatusaddress-_issueraddress)
@@ -51,19 +51,24 @@
     * [**`renounceOwnership()`**](#renounceownership)
     * [**`setDeputy(address _deputy)`**](#setdeputyaddress-_deputy)
     * [**`transferOwnership(address _newOwner)`**](#transferownershipaddress-_newowner)
-- ### [PublicKeys](#PublicKeys)
+- ### [`PublicKeys`](#PublicKeys)
     * [**`addPublicKey(bytes _publicKey)`**](#addpublickeybytes-_publickey)
     * [**`publicKeyStore(address )`**](#publickeystoreaddress-)
 
 
-# Certificates
+# `Certificates`
+
+### The store of certificate hashes per user
+
+> #### The contract is used by Issuers when submitting certificates and by Seekers when verifying a certificate received from a User
 
 
+------
 ## **`addCertificate(address _user, bytes32 _hash)`**
 
 ### _Add a certificate_
 
-##### _Can only be called by active issuers (addresses in Issuers contract with status = Active)_
+> ##### _Can only be called by active issuers (addresses in Issuers contract with status = Active)_
 
 Inputs
 
@@ -74,6 +79,7 @@ Inputs
 
 
 
+------
 ## **`deputy()`**
 
 
@@ -86,6 +92,7 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`getCertificateAt(address _user, uint256 _index)`**
 
 ### _Get metadata of a user&#39;s certificate by its index_
@@ -107,6 +114,7 @@ Outputs
  *bool* | revoked |  
 
 
+------
 ## **`getCertificateCount(address _user)`**
 
 ### _Method returns the number of certificates for a given user_
@@ -125,6 +133,7 @@ Outputs
  *uint256* | count |  
 
 
+------
 ## **`getCertificateIndex(address _user, bytes32 _hash)`**
 
 ### _Find index of a user&#39;s certificate by its hash_
@@ -144,11 +153,12 @@ Outputs
  *int256* | index |  
 
 
+------
 ## **`getCertificateMetadata(address _user, bytes32 _hash)`**
 
 ### _Retrieve certificate metadata_
 
-##### _If the certificate with the provided user address and hash doesn't exist, then the return value of `_issuer` will be `0x0`_
+> ##### _If the certificate with the provided user address and hash doesn't exist, then the return value of `_issuer` will be `0x0`_
 
 Inputs
 
@@ -165,6 +175,7 @@ Outputs
  *bool* | _revoked |  
 
 
+------
 ## **`issuersContract()`**
 
 
@@ -177,6 +188,7 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`owner()`**
 
 
@@ -189,19 +201,21 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`renounceOwnership()`**
 
 
-##### _Allows the current owner to relinquish control of the contract._
+> ##### _Allows the current owner to relinquish control of the contract._
 
 
 
 
+------
 ## **`revokeCertificate(address _user, uint256 _certificateIndex)`**
 
 ### _Revoke a certificate_
 
-##### _Only the issuer can revoke their own certificate_
+> ##### _Only the issuer can revoke their own certificate_
 
 Inputs
 
@@ -212,11 +226,12 @@ Inputs
 
 
 
+------
 ## **`setDeputy(address _deputy)`**
 
 ### _Set a new deputy_
 
-##### _Only the contract owner or teh current deputy can reassign the depity to someone else_
+> ##### _Only the contract owner or teh current deputy can reassign the depity to someone else_
 
 Inputs
 
@@ -226,11 +241,12 @@ Inputs
 
 
 
+------
 ## **`setIssuersContract(address _issuersContract)`**
 
 ### _Owner and deputy can modify Issuers contract address (for upgrades etc)_
 
-##### _Can only be called by contract owner or deputy_
+> ##### _Can only be called by contract owner or deputy_
 
 Inputs
 
@@ -240,10 +256,11 @@ Inputs
 
 
 
+------
 ## **`transferOwnership(address _newOwner)`**
 
 
-##### _Allows the current owner to transfer control of the contract to a newOwner._
+> ##### _Allows the current owner to transfer control of the contract to a newOwner._
 
 Inputs
 
@@ -253,6 +270,7 @@ Inputs
 
 
 
+------
 ## **`users(uint256 )`**
 
 
@@ -271,9 +289,12 @@ Outputs
 
 
 
-# Escrow
+# `Escrow`
 
 
+
+
+------
 ## **`certificates()`**
 
 
@@ -286,6 +307,7 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`deputy()`**
 
 
@@ -298,6 +320,7 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`getDataRequestByHash(address _user, bytes32 _hash)`**
 
 
@@ -319,6 +342,7 @@ Outputs
  *uint48* | timestamp |  
 
 
+------
 ## **`getDataRequestByIndex(address _user, uint256 i)`**
 
 
@@ -340,6 +364,7 @@ Outputs
  *uint48* | timestamp |  
 
 
+------
 ## **`getDataRequestCount(address _user)`**
 
 
@@ -357,6 +382,7 @@ Outputs
  *uint256* |  |  
 
 
+------
 ## **`getDataRequestIndexByHash(address _user, bytes32 _hash)`**
 
 
@@ -375,6 +401,7 @@ Outputs
  *int256* |  |  
 
 
+------
 ## **`increaseAvailableBalance(uint256 amount)`**
 
 
@@ -387,6 +414,7 @@ Inputs
 
 
 
+------
 ## **`issuerReward()`**
 
 
@@ -399,6 +427,7 @@ Outputs
  *uint256* |  |  
 
 
+------
 ## **`owner()`**
 
 
@@ -411,6 +440,7 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`publicKeys()`**
 
 
@@ -423,6 +453,7 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`refundAvailableBalance()`**
 
 
@@ -430,6 +461,7 @@ Outputs
 
 
 
+------
 ## **`refundAvailableBalanceAdmin(address seeker)`**
 
 
@@ -442,14 +474,16 @@ Inputs
 
 
 
+------
 ## **`renounceOwnership()`**
 
 
-##### _Allows the current owner to relinquish control of the contract._
+> ##### _Allows the current owner to relinquish control of the contract._
 
 
 
 
+------
 ## **`seekerAvailableBalance(address )`**
 
 
@@ -467,6 +501,7 @@ Outputs
  *uint256* |  |  
 
 
+------
 ## **`seekerCancelRequest(address _user, bytes32 _hash)`**
 
 
@@ -480,6 +515,7 @@ Inputs
 
 
 
+------
 ## **`seekerCompleted(address _user, bytes32 _hash)`**
 
 
@@ -493,6 +529,7 @@ Inputs
 
 
 
+------
 ## **`seekerInflightBalance(address )`**
 
 
@@ -510,11 +547,12 @@ Outputs
  *uint256* |  |  
 
 
+------
 ## **`setDeputy(address _deputy)`**
 
 ### _Set a new deputy_
 
-##### _Only the contract owner or teh current deputy can reassign the depity to someone else_
+> ##### _Only the contract owner or teh current deputy can reassign the depity to someone else_
 
 Inputs
 
@@ -524,6 +562,7 @@ Inputs
 
 
 
+------
 ## **`setIssuerReward(uint256 _issuerReward)`**
 
 
@@ -536,6 +575,7 @@ Inputs
 
 
 
+------
 ## **`setTokensPerRequest(uint256 _tokensPerRequest)`**
 
 
@@ -548,6 +588,7 @@ Inputs
 
 
 
+------
 ## **`submitRequest(address _user, bytes32 _hash)`**
 
 
@@ -561,6 +602,7 @@ Inputs
 
 
 
+------
 ## **`token()`**
 
 
@@ -573,6 +615,7 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`tokensPerRequest()`**
 
 
@@ -585,10 +628,11 @@ Outputs
  *uint256* |  |  
 
 
+------
 ## **`transferOwnership(address _newOwner)`**
 
 
-##### _Allows the current owner to transfer control of the contract to a newOwner._
+> ##### _Allows the current owner to transfer control of the contract to a newOwner._
 
 Inputs
 
@@ -598,6 +642,7 @@ Inputs
 
 
 
+------
 ## **`userCompleteRequest(bytes32 _hash, bytes32 _locatorHash)`**
 
 
@@ -611,6 +656,7 @@ Inputs
 
 
 
+------
 ## **`userDenyRequest(bytes32 _hash)`**
 
 
@@ -624,9 +670,12 @@ Inputs
 
 
 
-# Issuers
+# `Issuers`
 
 
+
+
+------
 ## **`addIssuer(address _issuerAddress)`**
 
 
@@ -639,6 +688,7 @@ Inputs
 
 
 
+------
 ## **`deputy()`**
 
 
@@ -651,6 +701,7 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`getIssuerStatus(address _issuerAddress)`**
 
 
@@ -668,6 +719,7 @@ Outputs
  *uint8* |  |  
 
 
+------
 ## **`owner()`**
 
 
@@ -680,6 +732,7 @@ Outputs
  *address* |  |  
 
 
+------
 ## **`removeIssuer(address _issuerAddress)`**
 
 
@@ -692,19 +745,21 @@ Inputs
 
 
 
+------
 ## **`renounceOwnership()`**
 
 
-##### _Allows the current owner to relinquish control of the contract._
+> ##### _Allows the current owner to relinquish control of the contract._
 
 
 
 
+------
 ## **`setDeputy(address _deputy)`**
 
 ### _Set a new deputy_
 
-##### _Only the contract owner or teh current deputy can reassign the depity to someone else_
+> ##### _Only the contract owner or teh current deputy can reassign the depity to someone else_
 
 Inputs
 
@@ -714,10 +769,11 @@ Inputs
 
 
 
+------
 ## **`transferOwnership(address _newOwner)`**
 
 
-##### _Allows the current owner to transfer control of the contract to a newOwner._
+> ##### _Allows the current owner to transfer control of the contract to a newOwner._
 
 Inputs
 
@@ -728,9 +784,12 @@ Inputs
 
 
 
-# PublicKeys
+# `PublicKeys`
 
 
+
+
+------
 ## **`addPublicKey(bytes _publicKey)`**
 
 
@@ -743,6 +802,7 @@ Inputs
 
 
 
+------
 ## **`publicKeyStore(address )`**
 
 
