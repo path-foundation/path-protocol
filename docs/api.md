@@ -68,10 +68,10 @@
 ## **`addCertificate(address _user, bytes32 _hash)`**
 
 Inputs
-| type | name | description |
-| ---- | --- | --- |
-| *address* | _user | address of certificate owner |
-| *bytes32* | _hash | sha256 hash of the certificate text |
+ type | name | description 
+--- | --- | ---
+ *address* | _user | address of certificate owner 
+ *bytes32* | _hash | sha256 hash of the certificate text 
 
 
 
@@ -79,85 +79,85 @@ Inputs
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`getCertificateAt(address _user, uint256 _index)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *uint256* | _index |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *uint256* | _index |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *bytes32* | hash |  |
-| *address* | issuer |  |
-| *bool* | revoked |  |
+ type | name | description
+ --- | --- | --- 
+ *bytes32* | hash |  
+ *address* | issuer |  
+ *bool* | revoked |  
 
 
 ## **`getCertificateCount(address _user)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *uint256* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *uint256* |  |  
 
 
 ## **`getCertificateIndex(address _user, bytes32 _hash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *bytes32* | _hash |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *bytes32* | _hash |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *int256* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *int256* |  |  
 
 
 ## **`getCertificateMetadata(address _user, bytes32 _hash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *bytes32* | _hash |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *bytes32* | _hash |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* | _issuer |  |
-| *bool* | _revoked |  |
+ type | name | description
+ --- | --- | --- 
+ *address* | _issuer |  
+ *bool* | _revoked |  
 
 
 ## **`issuersContract()`**
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`owner()`**
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`renounceOwnership()`**
@@ -168,51 +168,51 @@ Outputs
 ## **`revokeCertificate(address _user, uint256 certificateIndex)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *uint256* | certificateIndex |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *uint256* | certificateIndex |  
 
 
 
 ## **`setDeputy(address _deputy)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _deputy |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _deputy |  
 
 
 
 ## **`setIssuersContract(address _issuersContract)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _issuersContract |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _issuersContract |  
 
 
 
 ## **`transferOwnership(address _newOwner)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _newOwner | The address to transfer ownership to. |
+ type | name | description 
+--- | --- | ---
+ *address* | _newOwner | The address to transfer ownership to. 
 
 
 
 ## **`users(uint256 )`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *uint256* |  |  |
+ type | name | description 
+--- | --- | ---
+ *uint256* |  |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 
@@ -223,18 +223,18 @@ Outputs
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`owner()`**
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`renounceOwnership()`**
@@ -245,18 +245,18 @@ Outputs
 ## **`setDeputy(address _deputy)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _deputy |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _deputy |  
 
 
 
 ## **`transferOwnership(address _newOwner)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _newOwner | The address to transfer ownership to. |
+ type | name | description 
+--- | --- | ---
+ *address* | _newOwner | The address to transfer ownership to. 
 
 
 
@@ -268,87 +268,87 @@ Inputs
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`deputy()`**
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`getDataRequestByHash(address _user, bytes32 _hash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *bytes32* | _hash |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *bytes32* | _hash |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* | seeker |  |
-| *uint8* | status |  |
-| *bytes32* | hash |  |
-| *uint48* | timestamp |  |
+ type | name | description
+ --- | --- | --- 
+ *address* | seeker |  
+ *uint8* | status |  
+ *bytes32* | hash |  
+ *uint48* | timestamp |  
 
 
 ## **`getDataRequestByIndex(address _user, uint256 i)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *uint256* | i |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *uint256* | i |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* | seeker |  |
-| *uint8* | status |  |
-| *bytes32* | hash |  |
-| *uint48* | timestamp |  |
+ type | name | description
+ --- | --- | --- 
+ *address* | seeker |  
+ *uint8* | status |  
+ *bytes32* | hash |  
+ *uint48* | timestamp |  
 
 
 ## **`getDataRequestCount(address _user)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *uint256* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *uint256* |  |  
 
 
 ## **`getDataRequestIndexByHash(address _user, bytes32 _hash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *bytes32* | _hash |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *bytes32* | _hash |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *int256* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *int256* |  |  
 
 
 ## **`increaseAvailableBalance(uint256 amount)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *uint256* | amount |  |
+ type | name | description 
+--- | --- | ---
+ *uint256* | amount |  
 
 
 
@@ -356,27 +356,27 @@ Inputs
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *uint256* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *uint256* |  |  
 
 
 ## **`owner()`**
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`publicKeys()`**
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`refundAvailableBalance()`**
@@ -387,9 +387,9 @@ Outputs
 ## **`refundAvailableBalanceAdmin(address seeker)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | seeker |  |
+ type | name | description 
+--- | --- | ---
+ *address* | seeker |  
 
 
 
@@ -401,83 +401,83 @@ Inputs
 ## **`seekerAvailableBalance(address )`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* |  |  |
+ type | name | description 
+--- | --- | ---
+ *address* |  |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *uint256* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *uint256* |  |  
 
 
 ## **`seekerCancelRequest(address _user, bytes32 _hash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *bytes32* | _hash |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *bytes32* | _hash |  
 
 
 
 ## **`seekerCompleted(address _user, bytes32 _hash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *bytes32* | _hash |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *bytes32* | _hash |  
 
 
 
 ## **`seekerInflightBalance(address )`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* |  |  |
+ type | name | description 
+--- | --- | ---
+ *address* |  |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *uint256* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *uint256* |  |  
 
 
 ## **`setDeputy(address _deputy)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _deputy |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _deputy |  
 
 
 
 ## **`setIssuerReward(uint256 _issuerReward)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *uint256* | _issuerReward |  |
+ type | name | description 
+--- | --- | ---
+ *uint256* | _issuerReward |  
 
 
 
 ## **`setTokensPerRequest(uint256 _tokensPerRequest)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *uint256* | _tokensPerRequest |  |
+ type | name | description 
+--- | --- | ---
+ *uint256* | _tokensPerRequest |  
 
 
 
 ## **`submitRequest(address _user, bytes32 _hash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _user |  |
-| *bytes32* | _hash |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _user |  
+ *bytes32* | _hash |  
 
 
 
@@ -485,45 +485,45 @@ Inputs
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`tokensPerRequest()`**
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *uint256* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *uint256* |  |  
 
 
 ## **`transferOwnership(address _newOwner)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _newOwner | The address to transfer ownership to. |
+ type | name | description 
+--- | --- | ---
+ *address* | _newOwner | The address to transfer ownership to. 
 
 
 
 ## **`userCompleteRequest(bytes32 _hash, bytes32 _locatorHash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *bytes32* | _hash |  |
-| *bytes32* | _locatorHash |  |
+ type | name | description 
+--- | --- | ---
+ *bytes32* | _hash |  
+ *bytes32* | _locatorHash |  
 
 
 
 ## **`userDenyRequest(bytes32 _hash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *bytes32* | _hash |  |
+ type | name | description 
+--- | --- | ---
+ *bytes32* | _hash |  
 
 
 
@@ -534,9 +534,9 @@ Inputs
 ## **`addIssuer(address _issuerAddress)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _issuerAddress |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _issuerAddress |  
 
 
 
@@ -544,39 +544,39 @@ Inputs
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`getIssuerStatus(address _issuerAddress)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _issuerAddress |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _issuerAddress |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *uint8* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *uint8* |  |  
 
 
 ## **`owner()`**
 
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *address* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *address* |  |  
 
 
 ## **`removeIssuer(address _issuerAddress)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _issuerAddress |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _issuerAddress |  
 
 
 
@@ -588,18 +588,18 @@ Inputs
 ## **`setDeputy(address _deputy)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _deputy |  |
+ type | name | description 
+--- | --- | ---
+ *address* | _deputy |  
 
 
 
 ## **`transferOwnership(address _newOwner)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* | _newOwner | The address to transfer ownership to. |
+ type | name | description 
+--- | --- | ---
+ *address* | _newOwner | The address to transfer ownership to. 
 
 
 
@@ -610,22 +610,22 @@ Inputs
 ## **`addPublicKey(bytes _publicKey)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *bytes* | _publicKey |  |
+ type | name | description 
+--- | --- | ---
+ *bytes* | _publicKey |  
 
 
 
 ## **`publicKeyStore(address )`**
 
 Inputs
-| type|name |description |
-|----|---|---|
-| *address* |  |  |
+ type | name | description 
+--- | --- | ---
+ *address* |  |  
 
 Outputs
-| type|name |description |
-|---|---|---|
-| *bytes* |  |  |
+ type | name | description
+ --- | --- | --- 
+ *bytes* |  |  
 
 
