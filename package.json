@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "truffle test",
-    "coverage": "./node_modules/.bin/solidity-coverage && open ./coverage/index.html"
+    "coverage": "./node_modules/.bin/solidity-coverage && open ./coverage/index.html",
+    "build-api": "node scripts/build-api.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,9 @@
     "ethereumjs-abi": "^0.6.5",
     "js-sha256": "^0.9.0",
     "js-sha3": "^0.7.0",
+    "mustache": "^2.3.0",
     "openzeppelin-solidity": "^1.10.0",
+    "shelljs": "^0.8.2",
     "truffle-contract": "^3.0.6",
     "web3": "^1.0.0-beta.34"
   },
