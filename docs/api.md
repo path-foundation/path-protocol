@@ -68,8 +68,8 @@
 ## **`addCertificate(address _user, bytes32 _hash)`**
 
 Inputs
-| type|name |description |
-|----|---|---|
+| type | name | description |
+| ---- | --- | --- |
 | *address* | _user | address of certificate owner |
 | *bytes32* | _hash | sha256 hash of the certificate text |
 
