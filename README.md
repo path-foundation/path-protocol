@@ -1,10 +1,8 @@
 # PATH protocol  [![Build Status](https://travis-ci.org/path-foundation/path-protocol.svg?branch=master)](https://travis-ci.org/path-foundation/path-protocol)
 
-PATH protocol smart contracts. 
+PATH protocol smart contracts.
 
-### What is this repository for? ###
-
-* Version 0.0.2
+[API Reference](./docs/api.md)
 
 ### How do I get set up? ###
 

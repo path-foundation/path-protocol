@@ -1,0 +1,41 @@
+## Smart contracts
+
+{{#contracts}}
+- ### [{{name}}](#{{name}})
+    {{#funcs}}
+    * [**`{{display}}`**](#{{displayAnchor}})
+    {{/funcs}}
+{{/contracts}}
+
+{{#contracts}}
+
+# {{name}}
+
+{{#funcs}}
+
+## **`{{display}}`**
+{{#userDocExists}}
+### _{{userdoc}}_
+{{/userDocExists}}
+
+{{#inputsExist}}
+Inputs
+| type|name |description |
+|-|-|-|
+{{#inputs}}
+| *{{type}}* | {{name}} | {{desc}} |
+{{/inputs}}
+{{/inputsExist}}
+
+{{#outputsExist}}
+Outputs
+| type|name |description |
+|-|-|-|
+{{#outputs}}
+| *{{type}}* | {{name}} | {{desc}} |
+{{/outputs}}
+{{/outputsExist}}
+
+{{/funcs}}
+
+{{/contracts}}

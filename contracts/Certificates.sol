@@ -46,6 +46,8 @@ contract Certificates is Deputable {
 
     /// @notice Add a certificate
     /// @dev Can only be called by active issuers (addresses in Issuers contract with status = Active)
+    /// @param _user address of certificate owner
+    /// @param _hash sha256 hash of the certificate text
     function addCertificate(address _user, bytes32 _hash) public
     {
         // Make sure the sender if a registered issuer
