@@ -69,7 +69,7 @@
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user | address of certificate owner |
 | *bytes32* | _hash | sha256 hash of the certificate text |
 
@@ -80,7 +80,7 @@ Inputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -88,13 +88,13 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *uint256* | _index |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *bytes32* | hash |  |
 | *address* | issuer |  |
 | *bool* | revoked |  |
@@ -104,12 +104,12 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *uint256* |  |  |
 
 
@@ -117,13 +117,13 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *bytes32* | _hash |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *int256* |  |  |
 
 
@@ -131,13 +131,13 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *bytes32* | _hash |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* | _issuer |  |
 | *bool* | _revoked |  |
 
@@ -147,7 +147,7 @@ Outputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -156,7 +156,7 @@ Outputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -169,7 +169,7 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *uint256* | certificateIndex |  |
 
@@ -179,7 +179,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _deputy |  |
 
 
@@ -188,7 +188,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _issuersContract |  |
 
 
@@ -197,7 +197,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _newOwner | The address to transfer ownership to. |
 
 
@@ -206,12 +206,12 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *uint256* |  |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -224,7 +224,7 @@ Outputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -233,7 +233,7 @@ Outputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -246,7 +246,7 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _deputy |  |
 
 
@@ -255,7 +255,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _newOwner | The address to transfer ownership to. |
 
 
@@ -269,7 +269,7 @@ Inputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -278,7 +278,7 @@ Outputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -286,13 +286,13 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *bytes32* | _hash |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* | seeker |  |
 | *uint8* | status |  |
 | *bytes32* | hash |  |
@@ -303,13 +303,13 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *uint256* | i |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* | seeker |  |
 | *uint8* | status |  |
 | *bytes32* | hash |  |
@@ -320,12 +320,12 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *uint256* |  |  |
 
 
@@ -333,13 +333,13 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *bytes32* | _hash |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *int256* |  |  |
 
 
@@ -347,7 +347,7 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *uint256* | amount |  |
 
 
@@ -357,7 +357,7 @@ Inputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *uint256* |  |  |
 
 
@@ -366,7 +366,7 @@ Outputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -375,7 +375,7 @@ Outputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -388,7 +388,7 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | seeker |  |
 
 
@@ -402,12 +402,12 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* |  |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *uint256* |  |  |
 
 
@@ -415,7 +415,7 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *bytes32* | _hash |  |
 
@@ -425,7 +425,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *bytes32* | _hash |  |
 
@@ -435,12 +435,12 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* |  |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *uint256* |  |  |
 
 
@@ -448,7 +448,7 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _deputy |  |
 
 
@@ -457,7 +457,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *uint256* | _issuerReward |  |
 
 
@@ -466,7 +466,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *uint256* | _tokensPerRequest |  |
 
 
@@ -475,7 +475,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _user |  |
 | *bytes32* | _hash |  |
 
@@ -486,7 +486,7 @@ Inputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -495,7 +495,7 @@ Outputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *uint256* |  |  |
 
 
@@ -503,7 +503,7 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _newOwner | The address to transfer ownership to. |
 
 
@@ -512,7 +512,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *bytes32* | _hash |  |
 | *bytes32* | _locatorHash |  |
 
@@ -522,7 +522,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *bytes32* | _hash |  |
 
 
@@ -535,7 +535,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _issuerAddress |  |
 
 
@@ -545,7 +545,7 @@ Inputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -553,12 +553,12 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _issuerAddress |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *uint8* |  |  |
 
 
@@ -567,7 +567,7 @@ Outputs
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *address* |  |  |
 
 
@@ -575,7 +575,7 @@ Outputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _issuerAddress |  |
 
 
@@ -589,7 +589,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _deputy |  |
 
 
@@ -598,7 +598,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* | _newOwner | The address to transfer ownership to. |
 
 
@@ -611,7 +611,7 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *bytes* | _publicKey |  |
 
 
@@ -620,12 +620,12 @@ Inputs
 
 Inputs
 | type|name |description |
-|-|-|-|
+|----|---|---|
 | *address* |  |  |
 
 Outputs
 | type|name |description |
-|-|-|-|
+|---|---|---|
 | *bytes* |  |  |
 
 
