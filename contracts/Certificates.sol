@@ -32,17 +32,19 @@ contract Certificates is Deputable {
     /// We use this for getting whitelisted issuers
     Issuers public issuersContract;
 
+    // Constructor
+    constructor(Issuers _issuersContract) public {
+        issuersContract = _issuersContract; 
+    }
+
     /// @notice Owner and deputy can modify Issuers contract address (for upgrades etc)
+    /// @dev Can only be called by contract owner or deputy
+    /// @param _issuersContract Issuers Address of Issuers contract
     function setIssuersContract(Issuers _issuersContract) public onlyOwnerOrDeputy {
         issuersContract = Issuers(_issuersContract);
     }
 
     event LogAddCertificate(address indexed _user, address indexed _issuerAddress, bytes32 _hash);
-
-    // Constructor
-    constructor(Issuers _issuersContract) public {
-        issuersContract = _issuersContract; 
-    }
 
     /// @notice Add a certificate
     /// @dev Can only be called by active issuers (addresses in Issuers contract with status = Active)
@@ -75,7 +77,11 @@ contract Certificates is Deputable {
 
     /// @notice Retrieve certificate metadata
     /// @dev If the certificate with the provided user address and hash doesn't exist,
-    // then the return value _issuer will be 0x0
+    /// then the return value of `_issuer` will be `0x0`
+    /// @param _user User address
+    /// @param _hash Sha256 hash of the certificate to retrieve metadata for
+    /// @return _issuer Address of the certificate issuer
+    /// @return _revoked Flag showing whether the certificate has been revoked by its issuer
     function getCertificateMetadata(address _user, bytes32 _hash) public view
         returns (address _issuer, bool _revoked) {
         
@@ -90,11 +96,19 @@ contract Certificates is Deputable {
         }
     }
 
-    // We need the following two methods to be able to retrieve all certificate matadadat for a user
-    function getCertificateCount(address _user) public view returns(uint256) {
-        return certificates[_user].length;
+    /// @notice Method returns the number of certificates for a given user
+    /// @param _user User address
+    /// @return count Number of certificates a given user has
+    function getCertificateCount(address _user) public view returns(uint256 count) {
+        count = certificates[_user].length;
     }
 
+    /// @notice Get metadata of a user's certificate by its index
+    /// @param _user User's address
+    /// @param _index Certificate index
+    /// @return hash Certificate hash
+    /// @return _issuer Address of the certificate issuer
+    /// @return _revoked Flag showing whether the certificate has been revoked by its issuer
     function getCertificateAt(address _user, uint _index) public view 
         returns(bytes32 hash, address issuer, bool revoked) {
         
@@ -109,7 +123,11 @@ contract Certificates is Deputable {
         }
     }
 
-    function getCertificateIndex(address _user, bytes32 _hash) public view returns (int) {
+    /// @notice Find index of a user's certificate by its hash
+    /// @param _user User's address
+    /// @param _hash Certificate hash
+    /// @return index Indexof the certificate in the user's certificates array
+    function getCertificateIndex(address _user, bytes32 _hash) public view returns (int index) {
         Certificate[] storage certs = certificates[_user];
 
         // Find certificate by hash
@@ -126,14 +144,17 @@ contract Certificates is Deputable {
 
     event LogCertificateRevoked(address indexed _user, bytes32 _hash);
 
-    //Revoke a certificate - only the issuer can revoke
-    function revokeCertificate(address _user, uint certificateIndex) public {
+    /// @notice Revoke a certificate
+    /// @dev Only the issuer can revoke their own certificate
+    /// @param _user User address
+    /// @param _certificateIndex Index of certificate to be revoked in the user's array of certificates
+    function revokeCertificate(address _user, uint _certificateIndex) public {
         address issuerAddress = msg.sender;
 
         // require an active issuer
         require(issuersContract.getIssuerStatus(issuerAddress) == Issuers.IssuerStatus.Active);
 
-        Certificate storage cert = certificates[_user][certificateIndex];
+        Certificate storage cert = certificates[_user][_certificateIndex];
 
         require(issuerAddress == cert.issuer, "Only a certificate issuer can revoke their certificate");
 

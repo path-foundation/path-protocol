@@ -14,9 +14,14 @@
 {{#funcs}}
 
 ## **`{{display}}`**
-{{#userDocExists}}
+
+{{#userdocExists}}
 ### _{{userdoc}}_
-{{/userDocExists}}
+{{/userdocExists}}
+
+{{#devdocExists}}
+##### _{{{devdoc}}}_
+{{/devdocExists}}
 
 {{#inputsExist}}
 Inputs

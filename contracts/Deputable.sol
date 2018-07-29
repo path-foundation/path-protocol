@@ -9,9 +9,11 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
  */
 contract Deputable is Ownable {
     address public deputy;
+    
     event DeputyModified(address indexed previousDeputy, address indexed newDeputy);
 
-    // Current deputy can reassign depity to someone else
+    /// @notice Set a new deputy
+    /// @dev Only the contract owner or teh current deputy can reassign the depity to someone else
     function setDeputy(address _deputy) public onlyOwnerOrDeputy {
         emit DeputyModified(deputy, _deputy);
         deputy = _deputy;

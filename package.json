@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "truffle test",
-    "coverage": "./node_modules/.bin/solidity-coverage && open ./coverage/index.html"
+    "coverage": "./node_modules/.bin/solidity-coverage && open ./coverage/index.html",
+    "build-api": "node scripts/build-api.js"
   },
   "repository": {
     "type": "git",

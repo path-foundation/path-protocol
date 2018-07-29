@@ -15,6 +15,7 @@ const excludeContracts = [
     'TransferAndCallbackInterface',
     'TransferAndCallbackReceiver',
     'Migrations',
+    'Deputable',
 ];
 
 // Modify json
