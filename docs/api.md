@@ -63,7 +63,6 @@
 > #### The contract is used by Issuers when submitting certificates and by Seekers when verifying a certificate received from a User
 
 
-------
 ## **`addCertificate(address _user, bytes32 _hash)`**
 
 ### _Add a certificate_
@@ -79,7 +78,6 @@ Inputs
 
 
 
-------
 ## **`deputy()`**
 
 
@@ -92,7 +90,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`getCertificateAt(address _user, uint256 _index)`**
 
 ### _Get metadata of a user&#39;s certificate by its index_
@@ -114,7 +111,6 @@ Outputs
  *bool* | `revoked` | Flag showing whether the certificate has been revoked by its issuer 
 
 
-------
 ## **`getCertificateCount(address _user)`**
 
 ### _Method returns the number of certificates for a given user_
@@ -133,7 +129,6 @@ Outputs
  *uint256* | `count` | Number of certificates a given user has 
 
 
-------
 ## **`getCertificateIndex(address _user, bytes32 _hash)`**
 
 ### _Find index of a user&#39;s certificate by its hash_
@@ -153,7 +148,6 @@ Outputs
  *int256* | `index` | Indexof the certificate in the user&#39;s certificates array 
 
 
-------
 ## **`getCertificateMetadata(address _user, bytes32 _hash)`**
 
 ### _Retrieve certificate metadata_
@@ -175,7 +169,6 @@ Outputs
  *bool* | `_revoked` | Flag showing whether the certificate has been revoked by its issuer 
 
 
-------
 ## **`issuersContract()`**
 
 
@@ -188,7 +181,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`owner()`**
 
 
@@ -201,7 +193,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`renounceOwnership()`**
 
 
@@ -210,7 +201,6 @@ Outputs
 
 
 
-------
 ## **`revokeCertificate(address _user, uint256 _certificateIndex)`**
 
 ### _Revoke a certificate_
@@ -226,7 +216,6 @@ Inputs
 
 
 
-------
 ## **`setDeputy(address _deputy)`**
 
 ### _Set a new deputy_
@@ -241,7 +230,6 @@ Inputs
 
 
 
-------
 ## **`setIssuersContract(address _issuersContract)`**
 
 ### _Owner and deputy can modify Issuers contract address (for upgrades etc)_
@@ -256,7 +244,6 @@ Inputs
 
 
 
-------
 ## **`transferOwnership(address _newOwner)`**
 
 
@@ -270,7 +257,6 @@ Inputs
 
 
 
-------
 ## **`users(uint256 )`**
 
 
@@ -294,7 +280,6 @@ Outputs
 
 
 
-------
 ## **`certificates()`**
 
 
@@ -307,7 +292,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`deputy()`**
 
 
@@ -320,7 +304,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`getDataRequestByHash(address _user, bytes32 _hash)`**
 
 
@@ -342,7 +325,6 @@ Outputs
  *uint48* | `timestamp` |  
 
 
-------
 ## **`getDataRequestByIndex(address _user, uint256 i)`**
 
 
@@ -364,7 +346,6 @@ Outputs
  *uint48* | `timestamp` |  
 
 
-------
 ## **`getDataRequestCount(address _user)`**
 
 
@@ -382,7 +363,6 @@ Outputs
  *uint256* | `_uint256` |  
 
 
-------
 ## **`getDataRequestIndexByHash(address _user, bytes32 _hash)`**
 
 
@@ -401,7 +381,6 @@ Outputs
  *int256* | `_int256` |  
 
 
-------
 ## **`increaseAvailableBalance(uint256 amount)`**
 
 
@@ -414,7 +393,6 @@ Inputs
 
 
 
-------
 ## **`issuerReward()`**
 
 
@@ -427,7 +405,6 @@ Outputs
  *uint256* | `_uint256` |  
 
 
-------
 ## **`owner()`**
 
 
@@ -440,7 +417,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`publicKeys()`**
 
 
@@ -453,7 +429,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`refundAvailableBalance()`**
 
 
@@ -461,7 +436,6 @@ Outputs
 
 
 
-------
 ## **`refundAvailableBalanceAdmin(address seeker)`**
 
 
@@ -474,7 +448,6 @@ Inputs
 
 
 
-------
 ## **`renounceOwnership()`**
 
 
@@ -483,7 +456,6 @@ Inputs
 
 
 
-------
 ## **`seekerAvailableBalance(address )`**
 
 
@@ -501,7 +473,6 @@ Outputs
  *uint256* | `_uint256` |  
 
 
-------
 ## **`seekerCancelRequest(address _user, bytes32 _hash)`**
 
 
@@ -515,7 +486,6 @@ Inputs
 
 
 
-------
 ## **`seekerCompleted(address _user, bytes32 _hash)`**
 
 
@@ -529,7 +499,6 @@ Inputs
 
 
 
-------
 ## **`seekerInflightBalance(address )`**
 
 
@@ -547,7 +516,6 @@ Outputs
  *uint256* | `_uint256` |  
 
 
-------
 ## **`setDeputy(address _deputy)`**
 
 ### _Set a new deputy_
@@ -562,7 +530,6 @@ Inputs
 
 
 
-------
 ## **`setIssuerReward(uint256 _issuerReward)`**
 
 
@@ -575,7 +542,6 @@ Inputs
 
 
 
-------
 ## **`setTokensPerRequest(uint256 _tokensPerRequest)`**
 
 
@@ -588,7 +554,6 @@ Inputs
 
 
 
-------
 ## **`submitRequest(address _user, bytes32 _hash)`**
 
 
@@ -602,7 +567,6 @@ Inputs
 
 
 
-------
 ## **`token()`**
 
 
@@ -615,7 +579,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`tokensPerRequest()`**
 
 
@@ -628,7 +591,6 @@ Outputs
  *uint256* | `_uint256` |  
 
 
-------
 ## **`transferOwnership(address _newOwner)`**
 
 
@@ -642,7 +604,6 @@ Inputs
 
 
 
-------
 ## **`userCompleteRequest(bytes32 _hash, bytes32 _locatorHash)`**
 
 
@@ -656,7 +617,6 @@ Inputs
 
 
 
-------
 ## **`userDenyRequest(bytes32 _hash)`**
 
 
@@ -675,7 +635,6 @@ Inputs
 
 
 
-------
 ## **`addIssuer(address _issuerAddress)`**
 
 
@@ -688,7 +647,6 @@ Inputs
 
 
 
-------
 ## **`deputy()`**
 
 
@@ -701,7 +659,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`getIssuerStatus(address _issuerAddress)`**
 
 
@@ -719,7 +676,6 @@ Outputs
  *uint8* | `_uint8` |  
 
 
-------
 ## **`owner()`**
 
 
@@ -732,7 +688,6 @@ Outputs
  *address* | `_address` |  
 
 
-------
 ## **`removeIssuer(address _issuerAddress)`**
 
 
@@ -745,7 +700,6 @@ Inputs
 
 
 
-------
 ## **`renounceOwnership()`**
 
 
@@ -754,7 +708,6 @@ Inputs
 
 
 
-------
 ## **`setDeputy(address _deputy)`**
 
 ### _Set a new deputy_
@@ -769,7 +722,6 @@ Inputs
 
 
 
-------
 ## **`transferOwnership(address _newOwner)`**
 
 
@@ -789,7 +741,6 @@ Inputs
 
 
 
-------
 ## **`addPublicKey(bytes _publicKey)`**
 
 
@@ -802,7 +753,6 @@ Inputs
 
 
 
-------
 ## **`publicKeyStore(address )`**
 
 
