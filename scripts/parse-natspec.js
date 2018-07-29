@@ -31,6 +31,10 @@ module.exports = (docString) => {
                 const paramName = content.substr(0, content.indexOf(' '));
                 currentTag = `param:${paramName}`;
                 content = content.substr(content.indexOf(' ') + 1).trim();
+            } else if (currentTag === 'return' && content.indexOf(' ') !== -1) {
+                const paramName = content.substr(0, content.indexOf(' '));
+                currentTag = `return:${paramName}`;
+                content = content.substr(content.indexOf(' ') + 1).trim();
             }
             linesPerTag[currentTag] = [content];
         } else if (readingTag) {

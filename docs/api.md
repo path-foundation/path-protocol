@@ -74,8 +74,8 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user | address of certificate owner 
- *bytes32* | _hash | sha256 hash of the certificate text 
+ *address* | `_user` | address of certificate owner 
+ *bytes32* | `_hash` | sha256 hash of the certificate text 
 
 
 
@@ -89,7 +89,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -102,16 +102,16 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user | User&#39;s address 
- *uint256* | _index | Certificate index 
+ *address* | `_user` | User&#39;s address 
+ *uint256* | `_index` | Certificate index 
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *bytes32* | hash |  
- *address* | issuer |  
- *bool* | revoked |  
+ *bytes32* | `hash` | Certificate hash 
+ *address* | `issuer` | Address of the certificate issuer 
+ *bool* | `revoked` | Flag showing whether the certificate has been revoked by its issuer 
 
 
 ------
@@ -124,13 +124,13 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user | User address 
+ *address* | `_user` | User address 
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *uint256* | count |  
+ *uint256* | `count` | Number of certificates a given user has 
 
 
 ------
@@ -143,14 +143,14 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user | User&#39;s address 
- *bytes32* | _hash | Certificate hash 
+ *address* | `_user` | User&#39;s address 
+ *bytes32* | `_hash` | Certificate hash 
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *int256* | index |  
+ *int256* | `index` | Indexof the certificate in the user&#39;s certificates array 
 
 
 ------
@@ -164,15 +164,15 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user | User address 
- *bytes32* | _hash | Sha256 hash of the certificate to retrieve metadata for 
+ *address* | `_user` | User address 
+ *bytes32* | `_hash` | Sha256 hash of the certificate to retrieve metadata for 
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *address* | _issuer |  
- *bool* | _revoked |  
+ *address* | `_issuer` | Address of the certificate issuer 
+ *bool* | `_revoked` | Flag showing whether the certificate has been revoked by its issuer 
 
 
 ------
@@ -185,7 +185,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -198,7 +198,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -221,8 +221,8 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user | User address 
- *uint256* | _certificateIndex | Index of certificate to be revoked in the user&#39;s array of certificates 
+ *address* | `_user` | User address 
+ *uint256* | `_certificateIndex` | Index of certificate to be revoked in the user&#39;s array of certificates 
 
 
 
@@ -237,7 +237,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _deputy |  
+ *address* | `_deputy` |  
 
 
 
@@ -252,7 +252,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _issuersContract | Issuers Address of Issuers contract 
+ *address* | `_issuersContract` | Issuers Address of Issuers contract 
 
 
 
@@ -266,7 +266,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _newOwner | The address to transfer ownership to. 
+ *address* | `_newOwner` | The address to transfer ownership to. 
 
 
 
@@ -279,13 +279,13 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *uint256* |  |  
+ *uint256* | `` |  
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 
@@ -304,7 +304,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -317,7 +317,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -329,17 +329,17 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user |  
- *bytes32* | _hash |  
+ *address* | `_user` |  
+ *bytes32* | `_hash` |  
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *address* | seeker |  
- *uint8* | status |  
- *bytes32* | hash |  
- *uint48* | timestamp |  
+ *address* | `seeker` |  
+ *uint8* | `status` |  
+ *bytes32* | `hash` |  
+ *uint48* | `timestamp` |  
 
 
 ------
@@ -351,17 +351,17 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user |  
- *uint256* | i |  
+ *address* | `_user` |  
+ *uint256* | `i` |  
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *address* | seeker |  
- *uint8* | status |  
- *bytes32* | hash |  
- *uint48* | timestamp |  
+ *address* | `seeker` |  
+ *uint8* | `status` |  
+ *bytes32* | `hash` |  
+ *uint48* | `timestamp` |  
 
 
 ------
@@ -373,13 +373,13 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user |  
+ *address* | `_user` |  
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *uint256* |  |  
+ *uint256* | `_uint256` |  
 
 
 ------
@@ -391,14 +391,14 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user |  
- *bytes32* | _hash |  
+ *address* | `_user` |  
+ *bytes32* | `_hash` |  
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *int256* |  |  
+ *int256* | `_int256` |  
 
 
 ------
@@ -410,7 +410,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *uint256* | amount |  
+ *uint256* | `amount` |  
 
 
 
@@ -424,7 +424,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *uint256* |  |  
+ *uint256* | `_uint256` |  
 
 
 ------
@@ -437,7 +437,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -450,7 +450,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -470,7 +470,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | seeker |  
+ *address* | `seeker` |  
 
 
 
@@ -492,13 +492,13 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* |  |  
+ *address* | `` |  
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *uint256* |  |  
+ *uint256* | `_uint256` |  
 
 
 ------
@@ -510,8 +510,8 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user |  
- *bytes32* | _hash |  
+ *address* | `_user` |  
+ *bytes32* | `_hash` |  
 
 
 
@@ -524,8 +524,8 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user |  
- *bytes32* | _hash |  
+ *address* | `_user` |  
+ *bytes32* | `_hash` |  
 
 
 
@@ -538,13 +538,13 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* |  |  
+ *address* | `` |  
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *uint256* |  |  
+ *uint256* | `_uint256` |  
 
 
 ------
@@ -558,7 +558,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _deputy |  
+ *address* | `_deputy` |  
 
 
 
@@ -571,7 +571,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *uint256* | _issuerReward |  
+ *uint256* | `_issuerReward` |  
 
 
 
@@ -584,7 +584,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *uint256* | _tokensPerRequest |  
+ *uint256* | `_tokensPerRequest` |  
 
 
 
@@ -597,8 +597,8 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _user |  
- *bytes32* | _hash |  
+ *address* | `_user` |  
+ *bytes32* | `_hash` |  
 
 
 
@@ -612,7 +612,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -625,7 +625,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *uint256* |  |  
+ *uint256* | `_uint256` |  
 
 
 ------
@@ -638,7 +638,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _newOwner | The address to transfer ownership to. 
+ *address* | `_newOwner` | The address to transfer ownership to. 
 
 
 
@@ -651,8 +651,8 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *bytes32* | _hash |  
- *bytes32* | _locatorHash |  
+ *bytes32* | `_hash` |  
+ *bytes32* | `_locatorHash` |  
 
 
 
@@ -665,7 +665,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *bytes32* | _hash |  
+ *bytes32* | `_hash` |  
 
 
 
@@ -684,7 +684,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _issuerAddress |  
+ *address* | `_issuerAddress` |  
 
 
 
@@ -698,7 +698,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -710,13 +710,13 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _issuerAddress |  
+ *address* | `_issuerAddress` |  
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *uint8* |  |  
+ *uint8* | `_uint8` |  
 
 
 ------
@@ -729,7 +729,7 @@ Outputs
 
  type | name | description
  --- | --- | --- 
- *address* |  |  
+ *address* | `_address` |  
 
 
 ------
@@ -741,7 +741,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _issuerAddress |  
+ *address* | `_issuerAddress` |  
 
 
 
@@ -765,7 +765,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _deputy |  
+ *address* | `_deputy` |  
 
 
 
@@ -779,7 +779,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | _newOwner | The address to transfer ownership to. 
+ *address* | `_newOwner` | The address to transfer ownership to. 
 
 
 
@@ -798,7 +798,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *bytes* | _publicKey |  
+ *bytes* | `_publicKey` |  
 
 
 
@@ -811,12 +811,12 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* |  |  
+ *address* | `` |  
 
 Outputs
 
  type | name | description
  --- | --- | --- 
- *bytes* |  |  
+ *bytes* | `_bytes` |  
 
 

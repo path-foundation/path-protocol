@@ -28,7 +28,7 @@ contract Certificates is Deputable {
         bool revoked; // 1 byte
     }
 
-    /// @notice Title Address of Issuers contract.
+    /// @notice Address of Issuers contract.
     /// We use this for getting whitelisted issuers
     Issuers public issuersContract;
 
@@ -107,8 +107,8 @@ contract Certificates is Deputable {
     /// @param _user User's address
     /// @param _index Certificate index
     /// @return hash Certificate hash
-    /// @return _issuer Address of the certificate issuer
-    /// @return _revoked Flag showing whether the certificate has been revoked by its issuer
+    /// @return issuer Address of the certificate issuer
+    /// @return revoked Flag showing whether the certificate has been revoked by its issuer
     function getCertificateAt(address _user, uint _index) public view 
         returns(bytes32 hash, address issuer, bool revoked) {
         
