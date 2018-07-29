@@ -1,59 +1,59 @@
 ## Smart contracts
 
 - ### [`Certificates`](#Certificates)
-    * [**`addCertificate(address _user, bytes32 _hash)`**](#addcertificateaddress-_user-bytes32-_hash)
+    * [**`addCertificate(address _user, bytes32 _hash)`**](#addCertificateaddress-_user-bytes32-_hash)
     * [**`deputy()`**](#deputy)
-    * [**`getCertificateAt(address _user, uint256 _index)`**](#getcertificateataddress-_user-uint256-_index)
-    * [**`getCertificateCount(address _user)`**](#getcertificatecountaddress-_user)
-    * [**`getCertificateIndex(address _user, bytes32 _hash)`**](#getcertificateindexaddress-_user-bytes32-_hash)
-    * [**`getCertificateMetadata(address _user, bytes32 _hash)`**](#getcertificatemetadataaddress-_user-bytes32-_hash)
-    * [**`issuersContract()`**](#issuerscontract)
+    * [**`getCertificateAt(address _user, uint256 _index)`**](#getCertificateAtaddress-_user-uint256-_index)
+    * [**`getCertificateCount(address _user)`**](#getCertificateCountaddress-_user)
+    * [**`getCertificateIndex(address _user, bytes32 _hash)`**](#getCertificateIndexaddress-_user-bytes32-_hash)
+    * [**`getCertificateMetadata(address _user, bytes32 _hash)`**](#getCertificateMetadataaddress-_user-bytes32-_hash)
+    * [**`issuersContract()`**](#issuersContract)
     * [**`owner()`**](#owner)
-    * [**`renounceOwnership()`**](#renounceownership)
-    * [**`revokeCertificate(address _user, uint256 _certificateIndex)`**](#revokecertificateaddress-_user-uint256-_certificateindex)
-    * [**`setDeputy(address _deputy)`**](#setdeputyaddress-_deputy)
-    * [**`setIssuersContract(address _issuersContract)`**](#setissuerscontractaddress-_issuerscontract)
-    * [**`transferOwnership(address _newOwner)`**](#transferownershipaddress-_newowner)
-    * [**`users(uint256 )`**](#usersuint256-)
+    * [**`renounceOwnership()`**](#renounceOwnership)
+    * [**`revokeCertificate(address _user, uint256 _certificateIndex)`**](#revokeCertificateaddress-_user-uint256-_certificateIndex)
+    * [**`setDeputy(address _deputy)`**](#setDeputyaddress-_deputy)
+    * [**`setIssuersContract(address _issuersContract)`**](#setIssuersContractaddress-_issuersContract)
+    * [**`transferOwnership(address _newOwner)`**](#transferOwnershipaddress-_newOwner)
+    * [**`users(uint256 _uint256)`**](#usersuint256-_uint256)
 - ### [`Escrow`](#Escrow)
     * [**`certificates()`**](#certificates)
     * [**`deputy()`**](#deputy)
-    * [**`getDataRequestByHash(address _user, bytes32 _hash)`**](#getdatarequestbyhashaddress-_user-bytes32-_hash)
-    * [**`getDataRequestByIndex(address _user, uint256 i)`**](#getdatarequestbyindexaddress-_user-uint256-i)
-    * [**`getDataRequestCount(address _user)`**](#getdatarequestcountaddress-_user)
-    * [**`getDataRequestIndexByHash(address _user, bytes32 _hash)`**](#getdatarequestindexbyhashaddress-_user-bytes32-_hash)
-    * [**`increaseAvailableBalance(uint256 amount)`**](#increaseavailablebalanceuint256-amount)
-    * [**`issuerReward()`**](#issuerreward)
+    * [**`getDataRequestByHash(address _user, bytes32 _hash)`**](#getDataRequestByHashaddress-_user-bytes32-_hash)
+    * [**`getDataRequestByIndex(address _user, uint256 i)`**](#getDataRequestByIndexaddress-_user-uint256-i)
+    * [**`getDataRequestCount(address _user)`**](#getDataRequestCountaddress-_user)
+    * [**`getDataRequestIndexByHash(address _user, bytes32 _hash)`**](#getDataRequestIndexByHashaddress-_user-bytes32-_hash)
+    * [**`increaseAvailableBalance(uint256 amount)`**](#increaseAvailableBalanceuint256-amount)
+    * [**`issuerReward()`**](#issuerReward)
     * [**`owner()`**](#owner)
-    * [**`publicKeys()`**](#publickeys)
-    * [**`refundAvailableBalance()`**](#refundavailablebalance)
-    * [**`refundAvailableBalanceAdmin(address seeker)`**](#refundavailablebalanceadminaddress-seeker)
-    * [**`renounceOwnership()`**](#renounceownership)
-    * [**`seekerAvailableBalance(address )`**](#seekeravailablebalanceaddress-)
-    * [**`seekerCancelRequest(address _user, bytes32 _hash)`**](#seekercancelrequestaddress-_user-bytes32-_hash)
-    * [**`seekerCompleted(address _user, bytes32 _hash)`**](#seekercompletedaddress-_user-bytes32-_hash)
-    * [**`seekerInflightBalance(address )`**](#seekerinflightbalanceaddress-)
-    * [**`setDeputy(address _deputy)`**](#setdeputyaddress-_deputy)
-    * [**`setIssuerReward(uint256 _issuerReward)`**](#setissuerrewarduint256-_issuerreward)
-    * [**`setTokensPerRequest(uint256 _tokensPerRequest)`**](#settokensperrequestuint256-_tokensperrequest)
-    * [**`submitRequest(address _user, bytes32 _hash)`**](#submitrequestaddress-_user-bytes32-_hash)
+    * [**`publicKeys()`**](#publicKeys)
+    * [**`refundAvailableBalance()`**](#refundAvailableBalance)
+    * [**`refundAvailableBalanceAdmin(address seeker)`**](#refundAvailableBalanceAdminaddress-seeker)
+    * [**`renounceOwnership()`**](#renounceOwnership)
+    * [**`seekerAvailableBalance(address _address)`**](#seekerAvailableBalanceaddress-_address)
+    * [**`seekerCancelRequest(address _user, bytes32 _hash)`**](#seekerCancelRequestaddress-_user-bytes32-_hash)
+    * [**`seekerCompleted(address _user, bytes32 _hash)`**](#seekerCompletedaddress-_user-bytes32-_hash)
+    * [**`seekerInflightBalance(address _address)`**](#seekerInflightBalanceaddress-_address)
+    * [**`setDeputy(address _deputy)`**](#setDeputyaddress-_deputy)
+    * [**`setIssuerReward(uint256 _issuerReward)`**](#setIssuerRewarduint256-_issuerReward)
+    * [**`setTokensPerRequest(uint256 _tokensPerRequest)`**](#setTokensPerRequestuint256-_tokensPerRequest)
+    * [**`submitRequest(address _user, bytes32 _hash)`**](#submitRequestaddress-_user-bytes32-_hash)
     * [**`token()`**](#token)
-    * [**`tokensPerRequest()`**](#tokensperrequest)
-    * [**`transferOwnership(address _newOwner)`**](#transferownershipaddress-_newowner)
-    * [**`userCompleteRequest(bytes32 _hash, bytes32 _locatorHash)`**](#usercompleterequestbytes32-_hash-bytes32-_locatorhash)
-    * [**`userDenyRequest(bytes32 _hash)`**](#userdenyrequestbytes32-_hash)
+    * [**`tokensPerRequest()`**](#tokensPerRequest)
+    * [**`transferOwnership(address _newOwner)`**](#transferOwnershipaddress-_newOwner)
+    * [**`userCompleteRequest(bytes32 _hash, bytes32 _locatorHash)`**](#userCompleteRequestbytes32-_hash-bytes32-_locatorHash)
+    * [**`userDenyRequest(bytes32 _hash)`**](#userDenyRequestbytes32-_hash)
 - ### [`Issuers`](#Issuers)
-    * [**`addIssuer(address _issuerAddress)`**](#addissueraddress-_issueraddress)
+    * [**`addIssuer(address _issuerAddress)`**](#addIssueraddress-_issuerAddress)
     * [**`deputy()`**](#deputy)
-    * [**`getIssuerStatus(address _issuerAddress)`**](#getissuerstatusaddress-_issueraddress)
+    * [**`getIssuerStatus(address _issuerAddress)`**](#getIssuerStatusaddress-_issuerAddress)
     * [**`owner()`**](#owner)
-    * [**`removeIssuer(address _issuerAddress)`**](#removeissueraddress-_issueraddress)
-    * [**`renounceOwnership()`**](#renounceownership)
-    * [**`setDeputy(address _deputy)`**](#setdeputyaddress-_deputy)
-    * [**`transferOwnership(address _newOwner)`**](#transferownershipaddress-_newowner)
+    * [**`removeIssuer(address _issuerAddress)`**](#removeIssueraddress-_issuerAddress)
+    * [**`renounceOwnership()`**](#renounceOwnership)
+    * [**`setDeputy(address _deputy)`**](#setDeputyaddress-_deputy)
+    * [**`transferOwnership(address _newOwner)`**](#transferOwnershipaddress-_newOwner)
 - ### [`PublicKeys`](#PublicKeys)
-    * [**`addPublicKey(bytes _publicKey)`**](#addpublickeybytes-_publickey)
-    * [**`publicKeyStore(address )`**](#publickeystoreaddress-)
+    * [**`addPublicKey(bytes _publicKey)`**](#addPublicKeybytes-_publicKey)
+    * [**`publicKeyStore(address _address)`**](#publicKeyStoreaddress-_address)
 
 
 # `Certificates`
@@ -257,7 +257,7 @@ Inputs
 
 
 
-## **`users(uint256 )`**
+## **`users(uint256 _uint256)`**
 
 
 
@@ -265,7 +265,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *uint256* | `` |  
+ *uint256* | `_uint256` |  
 
 Outputs
 
@@ -456,7 +456,7 @@ Inputs
 
 
 
-## **`seekerAvailableBalance(address )`**
+## **`seekerAvailableBalance(address _address)`**
 
 
 
@@ -464,7 +464,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | `` |  
+ *address* | `_address` |  
 
 Outputs
 
@@ -499,7 +499,7 @@ Inputs
 
 
 
-## **`seekerInflightBalance(address )`**
+## **`seekerInflightBalance(address _address)`**
 
 
 
@@ -507,7 +507,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | `` |  
+ *address* | `_address` |  
 
 Outputs
 
@@ -753,7 +753,7 @@ Inputs
 
 
 
-## **`publicKeyStore(address )`**
+## **`publicKeyStore(address _address)`**
 
 
 
@@ -761,7 +761,7 @@ Inputs
 
  type | name | description 
 --- | --- | ---
- *address* | `` |  
+ *address* | `_address` |  
 
 Outputs
 

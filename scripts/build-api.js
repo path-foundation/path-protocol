@@ -45,7 +45,13 @@ Object.keys(json.contracts).forEach(cname => {
     const funcs = [];
 
     abi.filter(f => f.type === 'function').sort((a, b) => ((a.name > b.name) ? 1 : -1)).forEach(f => {
+        // For output variables that are missing name, create a default name
+        // for display purposes
+        f.inputs.filter(i => !i.name).forEach(i => i.name = `_${i.type}`);
+        f.outputs.filter(o => !o.name).forEach(o => o.name = `_${o.type}`);
+
         const sig = `${f.name}(${f.inputs.map(i => i.type).join(',')})`;
+
         const devdoc = devdocs.methods[sig] || { details: null, params: null };
         const userdoc = userdocs.methods[sig] || { notice: null };
 
@@ -54,7 +60,7 @@ Object.keys(json.contracts).forEach(cname => {
         const display = `${f.name}(${f.inputs.map(i => `${i.type} ${i.name}`).join(', ')})`;
 
         // Anchor replaces spaces with `-` and removes all other non alphanumerics
-        const displayAnchor = display.trim().toLowerCase()
+        const displayAnchor = display.trim()
             .replace(/[^a-zA-Z0-9_ ]+/g, '')
             .replace(/\s+/g, '-');
 
@@ -74,10 +80,6 @@ Object.keys(json.contracts).forEach(cname => {
             constant: f.constant,
             payable: f.stateMutability === 'payable',
         };
-
-        // For output variables that are missing name, create a default name
-        // for display purposes
-        func.outputs.filter(o => !o.name).forEach(o => o.name = `_${o.type}`);
 
         // Add input descriptions
         func.inputs.forEach(i => {
