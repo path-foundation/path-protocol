@@ -1,7 +1,7 @@
 ## Smart contracts
 
 {{#contracts}}
-- ### [{{name}}](#{{name}})
+- ### [`{{name}}`](#{{name}})
     {{#funcs}}
     * [**`{{display}}`**](#{{displayAnchor}})
     {{/funcs}}
@@ -9,10 +9,19 @@
 
 {{#contracts}}
 
-# {{name}}
+# `{{name}}`
+
+{{#doc.titleExists}}
+### {{doc.title}}
+{{/doc.titleExists}}
+
+{{#doc.noticeExists}}
+> #### {{doc.notice}}
+{{/doc.noticeExists}}
 
 {{#funcs}}
 
+------
 ## **`{{display}}`**
 
 {{#userdocExists}}
@@ -20,7 +29,7 @@
 {{/userdocExists}}
 
 {{#devdocExists}}
-##### _{{{devdoc}}}_
+> ##### _{{{devdoc}}}_
 {{/devdocExists}}
 
 {{#inputsExist}}
@@ -29,7 +38,7 @@ Inputs
  type | name | description 
 --- | --- | ---
 {{#inputs}}
- *{{type}}* | {{name}} | {{desc}} 
+ *{{type}}* | `{{name}}` | {{desc}} 
 {{/inputs}}
 {{/inputsExist}}
 
@@ -39,7 +48,7 @@ Outputs
  type | name | description
  --- | --- | --- 
 {{#outputs}}
- *{{type}}* | {{name}} | {{desc}} 
+ *{{type}}* | `{{name}}` | {{desc}} 
 {{/outputs}}
 {{/outputsExist}}
 

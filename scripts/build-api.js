@@ -1,13 +1,16 @@
-/* eslint no-param-reassign: off */
+/* eslint no-param-reassign: off, no-return-assign: off */
 const shell = require('shelljs');
 const Mustache = require('mustache');
 const fs = require('fs');
+const parseNatspec = require('./parse-natspec');
 
 const cmd = 'solc   --pretty-json   --allow-paths ./contracts   --combined-json abi,ast,compact-format,devdoc,hashes,interface,metadata,opcodes,srcmap,srcmap-runtime,userdoc   openzeppelin-solidity=/Users/leyboan1/dev/cry/path-protocol/node_modules/openzeppelin-solidity $(find ./contracts -type f -name "*.sol"  -not -path "*token/*" -not -path "*test/*")';
 
-console.log(cmd);
+//console.log(cmd);
 
 const json = JSON.parse(shell.exec(cmd, { silent: true }).stdout);
+
+//fs.writeFileSync('./docs/abi.json', JSON.stringify(json, null, 2));
 
 const excludeContracts = [
     'PathToken',
@@ -26,9 +29,13 @@ Object.keys(json.contracts).forEach(cname => {
     // Contract name
     const contractName = cname.split(':')[1];
     // File name
-    //const sourceName = cname.split(':')[0];
+    const sourceName = cname.split(':')[0];
+
+    const source = json.sources[sourceName];
 
     if (excludeContracts.includes(contractName)) return;
+
+    const contractSrc = source.AST.nodes.find(node => node.nodeType === 'ContractDefinition' && node.name === contractName);
 
     const jsonContract = json.contracts[cname];
     const abi = JSON.parse(jsonContract.abi);
@@ -53,9 +60,9 @@ Object.keys(json.contracts).forEach(cname => {
 
         const func = {
             name: f.name,
-            inputs: JSON.parse(JSON.stringify(f.inputs)),
+            inputs: JSON.parse(JSON.stringify(f.inputs || [])),
             inputsExist: f.inputs.length > 0,
-            outputs: JSON.parse(JSON.stringify(f.outputs)),
+            outputs: JSON.parse(JSON.stringify(f.outputs || [])),
             outputsExist: f.outputs.length > 0,
             sig,
             display,
@@ -68,25 +75,46 @@ Object.keys(json.contracts).forEach(cname => {
             payable: f.stateMutability === 'payable',
         };
 
-        if (func.inputs) {
-            func.inputs.forEach(i => {
-                if (devdoc.params && devdoc.params[i.name]) {
-                    i.desc = devdoc.params[i.name];
-                }
-            });
-        }
+        // For output variables that are missing name, create a default name
+        // for display purposes
+        func.outputs.filter(o => !o.name).forEach(o => o.name = `_${o.type}`);
+
+        // Add input descriptions
+        func.inputs.forEach(i => {
+            if (devdoc.params && devdoc.params[i.name]) {
+                i.desc = devdoc.params[i.name];
+            }
+        });
 
         funcs.push(func);
+
+        const funcSource = contractSrc.nodes.find(node => node.nodeType === 'FunctionDefinition' && node.name === func.name);
+        if (funcSource) {
+            const doc = parseNatspec(funcSource.documentation);
+
+            // Add output description
+            func.outputs.forEach(o => {
+                o.desc = doc[`return:${o.name}`];
+            });
+        }
     });
 
     const contract = {
         name: contractName,
-        desc: '',
+        doc: {},
         funcs,
     };
     contracts.push(contract);
 
-    //const source = json.sources[sourceName];
+    if (contractSrc) {
+        const doc = parseNatspec(contractSrc.documentation);
+        contract.doc = {
+            title: doc.title,
+            notice: doc.notice,
+            titleExists: !!doc.title,
+            noticeExists: !!doc.notice,
+        };
+    }
 });
 
 const contractsData = { contracts };
@@ -99,4 +127,4 @@ const md = Mustache.render(template.toString(), contractsData);
 
 fs.writeFileSync('docs/api.md', md);
 
-console.log(md);
+//console.log(md);
