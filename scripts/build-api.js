@@ -60,7 +60,7 @@ Object.keys(json.contracts).forEach(cname => {
         const display = `${f.name}(${f.inputs.map(i => `${i.type} ${i.name}`).join(', ')})`;
 
         // Anchor replaces spaces with `-` and removes all other non alphanumerics
-        const displayAnchor = display.trim()
+        const displayAnchor = display.trim().toLowerCase()
             .replace(/[^a-zA-Z0-9_ ]+/g, '')
             .replace(/\s+/g, '-');
 
