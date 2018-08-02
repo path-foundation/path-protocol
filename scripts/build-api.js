@@ -109,12 +109,14 @@ Object.keys(json.contracts).forEach(cname => {
     contracts.push(contract);
 
     if (contractSrc) {
-        const doc = parseNatspec(contractSrc.documentation);
+        const doc = parseNatspec(contractSrc.documentation, true);
         contract.doc = {
             title: doc.title,
+            dev: doc.dev,
             notice: doc.notice,
             titleExists: !!doc.title,
             noticeExists: !!doc.notice,
+            devExists: !!doc.dev,
         };
     }
 });

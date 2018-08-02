@@ -96,7 +96,7 @@ contract Certificates is Deputable {
         }
     }
 
-    /// @notice Method returns the number of certificates for a given user
+    /// @notice Get the number of certificates for a given user
     /// @param _user User address
     /// @return count Number of certificates a given user has
     function getCertificateCount(address _user) public view returns(uint256 count) {

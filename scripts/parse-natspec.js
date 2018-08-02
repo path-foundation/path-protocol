@@ -11,7 +11,7 @@
  * encoded tags. See the NatSpec specification for more details:
  * https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format
  */
-module.exports = (docString) => {
+module.exports = (docString, keepNewLine) => {
     if (docString === null || docString.length === 0) {
         return {};
     }
@@ -45,10 +45,10 @@ module.exports = (docString) => {
     }
     const natspecTags = {};
     for (const [tag, linesOfTag] of Object.entries(linesPerTag)) {
-        natspecTags[tag] = linesOfTag.join(' ');
+        natspecTags[tag] = linesOfTag.join(keepNewLine ? '\n' : ' ');
     }
     if (extraLines.length > 0) {
-        natspecTags.extra = extraLines.join(' ');
+        natspecTags.extra = extraLines.join(keepNewLine ? '\n' : ' ');
     }
     return natspecTags;
 };

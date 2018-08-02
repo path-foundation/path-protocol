@@ -2,11 +2,9 @@ pragma solidity ^0.4.24;
 
 import "./Deputable.sol";
 
-/*
-    Contracts stores and manages certificate issuers
-    Only the Owner or a Deputy can add/enable/disable an issuer
-    Anyone can read the Issuers
- */
+/// @title Stores certificate issuers
+/// @dev Only the Owner or a Deputy can add/enable/disable an issuer
+/// @author Path Foundation
 contract Issuers is Deputable {
     // Whitelist of issuers mapped to their status
     mapping(address => IssuerStatus) internal issuers;
@@ -15,7 +13,7 @@ contract Issuers is Deputable {
 
     event LogIssuerAdded(address indexed _issuer);
     
-    // Add a new active issuer or reactivate inactive user
+    /// @notice Add a new active issuer or reactivate inactive user
     function addIssuer(address _issuerAddress) public onlyOwnerOrDeputy {
         IssuerStatus status = getIssuerStatus(_issuerAddress);
 
@@ -27,6 +25,8 @@ contract Issuers is Deputable {
 
     event LogIssuerRemoved(address indexed _issuerAddress);
 
+    /// @notice Deactivate an active issuer
+    /// @dev If the issuer does not exist or is inacive, no exceptions thrown
     function removeIssuer(address _issuerAddress) public onlyOwnerOrDeputy {
         IssuerStatus status = getIssuerStatus(_issuerAddress);
 
@@ -36,10 +36,11 @@ contract Issuers is Deputable {
         } 
     }
 
-    // Method returns issuer status
-    // 0 - issuer doesnt exists/not registered
-    // 1 - issuer is active
-    // 2 - issuer is inactive/deactivated
+    /// @notice Method returns issuer status
+    /// @dev Status:
+    /// 0 - issuer doesnt exists/not registered
+    /// 1 - issuer is active
+    /// 2 - issuer is inactive/deactivated
     function getIssuerStatus(address _issuerAddress) public view returns (IssuerStatus) {
         return issuers[_issuerAddress];
     }
