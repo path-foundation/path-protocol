@@ -20,7 +20,7 @@ contract Deputable is Ownable {
     }
 
     modifier onlyOwnerOrDeputy() {
-        require(msg.sender == owner || msg.sender == deputy);
+        require(msg.sender == owner || msg.sender == deputy, "Only owner or deputy may execute the function");
         _;
     }
 }

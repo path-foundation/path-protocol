@@ -8,7 +8,7 @@ contract PublicKeys {
     /// after verifying that the sender's address derives from that public key
     function addPublicKey(bytes _publicKey) public {
         // Make sure the sender sends their own public key
-        require(address(keccak256(_publicKey)) == msg.sender);
+        require(address(keccak256(_publicKey)) == msg.sender, "Sender's address doesn't match the public key");
         publicKeyStore[msg.sender] = _publicKey;
     }
 }
