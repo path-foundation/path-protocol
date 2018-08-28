@@ -366,10 +366,11 @@ contract Escrow is Deputable {
 
         req.status = RequestStatus.SeekerCancelled;
 
-        require(seekerInflightBalance[seeker] >= tokensPerRequest);
+        uint balanceToTransfer = seekerInflightBalance[seeker] >= tokensPerRequest ?
+            tokensPerRequest : seekerInflightBalance[seeker];
 
-        seekerInflightBalance[seeker] = seekerInflightBalance[seeker].sub(tokensPerRequest);
-        seekerAvailableBalance[seeker] = seekerAvailableBalance[seeker].add(tokensPerRequest);
+        seekerInflightBalance[seeker] = seekerInflightBalance[seeker].sub(balanceToTransfer);
+        seekerAvailableBalance[seeker] = seekerAvailableBalance[seeker].add(balanceToTransfer);
     }
 
     /// @notice Seeker received the certificate and successfully verified it against the hash
