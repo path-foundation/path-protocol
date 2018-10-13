@@ -99,8 +99,19 @@ contract Certificates is Deputable {
     /// @notice Get the number of certificates for a given user
     /// @param _user User address
     /// @return count Number of certificates a given user has
-    function getCertificateCount(address _user) public view returns(uint256 count) {
-        count = certificates[_user].length;
+    function getCertificateCount(address _user, bool _includeRevoked) public view returns(uint256 count) {
+        if (_includeRevoked) {
+            count = certificates[_user].length;
+        } else {
+            Certificate[] storage certs = certificates[_user];
+
+            count = 0;
+            for (uint i = 0 ; i < certs.length ; i ++) {
+                if (!certs[i].revoked) {
+                    count ++;
+                }
+            }
+        }
     }
 
     /// @notice Get metadata of a user's certificate by its index

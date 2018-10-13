@@ -163,12 +163,12 @@ contract('Certificates', (accounts) => {
     // ############## getCertificateCount ############
 
     it('Get user certificate count', async () => {
-        const cnt = await instance.getCertificateCount(user1address);
+        const cnt = await instance.getCertificateCount(user1address, true);
         assert.equal(cnt.toNumber(), 2, 'Certificate count should be 2');
     });
 
     it('Get user certificate count for non-existing user', async () => {
-        const cnt = await instance.getCertificateCount(user2address);
+        const cnt = await instance.getCertificateCount(user2address, true);
         assert.equal(cnt.toNumber(), 0, 'Certificate count should be 0');
     });
 

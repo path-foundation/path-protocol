@@ -35,7 +35,7 @@ module.exports = async (deployer) => {
                                                 Issuers: { address: Issuers.address, abi: Issuers.abi },
                                                 Certificates: { address: Certificates.address, abi: Certificates.abi },
                                                 Escrow: { address: Escrow.address, abi: Escrow.abi },
-                                                PublicKeys: { address: PublicKeys.address, abi: PublicKeys.abi }
+                                                PublicKeys: { address: PublicKeys.address, abi: PublicKeys.abi },
                                             };
 
                                             fs.writeFileSync(`./build/${network}.abi.json`, JSON.stringify(abi));
