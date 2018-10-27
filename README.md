@@ -30,11 +30,11 @@ Prereqs for building documentation:
         * sudo apt-get install solc
 
 Build:
-* https://github.com/path-foundation/path-protocol.git && cd path-protocol
-* npm install
-* truffle compile
-* truffle migrate
-* truffle test
+* `https://github.com/path-foundation/path-protocol.git && cd path-protocol`
+* `npm install`
+* `truffle compile`
+* `truffle migrate`
+* `truffle test`
 
 If using VS Code, add the following user settings (Preferences -> Settings)
 
@@ -43,6 +43,12 @@ If using VS Code, add the following user settings (Preferences -> Settings)
 "solidity.packageDefaultDependenciesContractsDirectory": "",
 "solidity.packageDefaultDependenciesDirectory": "node_modules",
 ```
+
+Deploy:
+* `truffle migrate --reset`
+
+Unit Test:
+* `truffle test`
 
 Also, truffle is sometimes lagging with ethereum compiler version included in it; 
 to upgrade etehreum compiler for your truffle install:

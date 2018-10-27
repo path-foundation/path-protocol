@@ -1,0 +1,18 @@
+{
+  "name": "path-protocol-artifacts",
+  "version": "0.0.2",
+  "description": "Path protocol smart contracts artifacts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "abi/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/path-foundation/path-protocol/path-protocol.git"
+  },
+  "author": "Andrey Leybovich (Path Foundation)",
+  "license": "MIT"
+}

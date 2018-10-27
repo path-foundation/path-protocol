@@ -7,6 +7,22 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "JS API Mocha Tests",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/js-api/test"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "localRoot": "${workspaceFolder}/js-api"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Truffle test (local)",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/node_modules/truffle-core/cli.js",

@@ -1,8 +1,9 @@
 // Define these truffle-injected globals so that eslint doesn't complain.
 const { artifacts, contract, assert } = global;
 
-const { getLogArgument } = require('./util/logs.js');
 const { sha256 } = require('js-sha256');
+
+const { getLogArgument } = require('./util/logs.js');
 
 const Certificates = artifacts.require('Certificates');
 const Issuers = artifacts.require('Issuers');
@@ -135,8 +136,7 @@ contract('Certificates', (accounts) => {
     it('Retrieving user certificate', async () => {
         const testHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
 
-        const [issuer, revoked] =
-            await instance.getCertificateMetadata(user1address, testHash);
+        const [issuer, revoked] = await instance.getCertificateMetadata(user1address, testHash);
 
         assert.equal(revoked, false, 'Certificate should not be revoked');
         assert.equal(issuer, issuer1address, 'Issuer should match');
@@ -145,30 +145,34 @@ contract('Certificates', (accounts) => {
     it('Attempt to retrieve a user certificate with wrong hash', async () => {
         const hash = `0x${sha256('something')}`;
 
-        const [issuer] =
+        try {
             await instance.getCertificateMetadata(user1address, hash);
-
-        assert.ok(issuer, 0x0);
+            assert.fail('Shouldn\'t get here');
+        } catch (error) {
+            assert.ok(true);
+        }
     });
 
     it('Attempt to retrieve a user certificate for non-existing user', async () => {
-        const hash = `0x${sha256('something')}`;
+        const hash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
 
-        const [issuer] =
-            await instance.getCertificateMetadata(user2address, hash);
-
-        assert.ok(issuer, 0x0);
+        try {
+            await instance.getCertificateMetadata(user1address, hash);
+            assert.fail('Shouldn\'t get here');
+        } catch (error) {
+            assert.ok(true);
+        }
     });
 
     // ############## getCertificateCount ############
 
     it('Get user certificate count', async () => {
-        const cnt = await instance.getCertificateCount(user1address, true);
+        const cnt = await instance.getCertificateCount(user1address, false);
         assert.equal(cnt.toNumber(), 2, 'Certificate count should be 2');
     });
 
     it('Get user certificate count for non-existing user', async () => {
-        const cnt = await instance.getCertificateCount(user2address, true);
+        const cnt = await instance.getCertificateCount(user2address, false);
         assert.equal(cnt.toNumber(), 0, 'Certificate count should be 0');
     });
 
@@ -214,19 +218,18 @@ contract('Certificates', (accounts) => {
     });
 
     it('Get user certificate at index that doesn\'t exist', async () => {
-        // Certificate not found so default values will be returned
-        const result = await instance.getCertificateAt(user1address, 3);
-        const issuer = result[1];
-        // Address should be default value of 0x0
-        assert.equal(issuer, 0x0, 'Issuer should be 0x0');
+        const [hash] = await instance.getCertificateAt(user1address, 3);
+
+        assert.equal(hash, 0, 'Issuer should be 0 as there is no certificate at position 3');
     });
 
     it('Get user certificate for user that doesn\'t exist', async () => {
-        // Certificate not found so default values will be returned
-        const result = await instance.getCertificateAt(user2address, 0);
-        const issuer = result[1];
-        // Address should be default value of 0x0
-        assert.equal(issuer, 0x0, 'Issuer should be 0x0');
+        try {
+            await instance.getCertificateAt(user2address, 0);
+            assert.fail();
+        } catch (error) {
+            assert.ok(true);
+        }
     });
     // ############## revokeCertificate ############
 
@@ -260,4 +263,3 @@ contract('Certificates', (accounts) => {
         }
     });
 });
-

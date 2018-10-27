@@ -103,10 +103,10 @@ contract Escrow is Deputable {
 
     /// @notice Method sets the reward percent for the issuer
     /// @dev Only Owner or Deputy can call this mehtod
-    /// The amount is in percent, i.e. whole number from 1 to 100
-    /// @param _issuerReward Issuer's reward in percent (1 to 100)
+    /// The amount is in percent, i.e. whole number from 0 to 100
+    /// @param _issuerReward Issuer's reward in percent (0 to 100)
     function setIssuerReward(uint _issuerReward) external onlyOwnerOrDeputy {
-        require (_issuerReward >= 1 && _issuerReward <= 100);
+        require (_issuerReward >= 0 && _issuerReward <= 100, "Issuer reward should be between 0% and 100%");
 
         issuerReward = _issuerReward;
     }
@@ -120,8 +120,8 @@ contract Escrow is Deputable {
     function increaseAvailableBalance(uint _amount) public {
         address seeker = msg.sender;
         
-        // Make sure seeker allowed transferrign the tokens
-        require(token.allowance(seeker, this) >= _amount);
+        // Make sure seeker allowed transferring the tokens
+        require(token.allowance(seeker, this) >= _amount, "Transfer not approved");
 
         // transfer tokens from seeker's account
         token.transferFrom(seeker, this, _amount);
@@ -135,7 +135,7 @@ contract Escrow is Deputable {
         address seeker = msg.sender;
         uint balance = seekerAvailableBalance[seeker];
         
-        require(balance > 0);
+        require(balance > 0, "Balance is zero");
 
         seekerAvailableBalance[seeker] = 0;
         token.transfer(seeker, balance);
@@ -146,7 +146,7 @@ contract Escrow is Deputable {
     function refundAvailableBalanceAdmin(address _seeker) public onlyOwnerOrDeputy {
         uint balance = seekerAvailableBalance[_seeker];
         
-        require(balance > 0);
+        require(balance > 0, "Balance is zero");
 
         seekerAvailableBalance[_seeker] = 0;
         token.transfer(_seeker, balance);
@@ -235,10 +235,10 @@ contract Escrow is Deputable {
     function getDataRequestByHash(address _user, bytes32 _hash) public view 
         returns (address seeker, RequestStatus status, bytes32 hash, uint48 timestamp) {
         
-        int i = getDataRequestIndexByHash(_user, _hash);
+        int index = getDataRequestIndexByHash(_user, _hash);
 
-        if (i >= 0) {
-            DataRequest storage req = requests[_user][uint(i)];
+        if (index >= 0) {
+            DataRequest storage req = requests[_user][uint(index)];
 
             seeker = req.seeker;
             status = req.status;
@@ -247,9 +247,9 @@ contract Escrow is Deputable {
         }
     }
 
-    event RequestSubmitted(address indexed _user, address indexed _seeker, bytes32 _hash);
-    event RequestDenied(address indexed _user, address indexed _seeker, bytes32 _hash);
-    event RequestCompleted(address indexed _user, address indexed _seeker, bytes32 _hash);
+    event RequestSubmitted(address indexed _user, address indexed _seeker, bytes32 _hash, int _index);
+    event RequestDenied(address indexed _user, address indexed _seeker, bytes32 _hash, int _index);
+    event RequestCompleted(address indexed _user, address indexed _seeker, bytes32 _hash, int _index);
 
     /// @notice Seeker places the request for a user's certificate with provided hash.
     /// Seeker can optionally send some ETH to cover User's gas for User's interaction with the contract
@@ -267,6 +267,7 @@ contract Escrow is Deputable {
         address issuer;
         bool revoked;
         (issuer, revoked) = certificates.getCertificateMetadata(_user, _hash);
+        require(issuer != 0, "Requested certificate not found");
         require(revoked == false, "Requested certificate has been revoked");
 
         address seeker = msg.sender;
@@ -298,11 +299,13 @@ contract Escrow is Deputable {
             locatorHash: 0
         });
 
-        requests[_user].push(request);
+        int index = int(requests[_user].push(request) - 1);
 
-        emit RequestSubmitted(_user, seeker, _hash);
+        emit RequestSubmitted(_user, seeker, _hash, index);
 
         // If seeker sent some eth along the way, transfer eth to the user
+        // TODO: WHat to do in case if the user denies teh request -
+        // we cant refund the seeker this eth amount
         if (msg.value > 0) {
             _user.transfer(msg.value);
         }
@@ -313,11 +316,13 @@ contract Escrow is Deputable {
     function userDenyRequest(bytes32 _hash) public {
         address user = msg.sender;
 
-        int i = getDataRequestIndexByHash(user, _hash);
+        // TODO: Optimize by getting request index outside this transaction
+        // and passing it to the function
+        int index = getDataRequestIndexByHash(user, _hash);
 
-        require(i >= 0, "Data request not found for the hash provided");
+        require(index >= 0, "Data request not found for the hash provided");
 
-        DataRequest storage req = requests[user][uint(i)];
+        DataRequest storage req = requests[user][uint(index)];
 
         require(req.status == RequestStatus.Initial, "Incorrect status");
 
@@ -327,7 +332,7 @@ contract Escrow is Deputable {
         seekerInflightBalance[req.seeker] = seekerInflightBalance[req.seeker].sub(tokensPerRequest);
         seekerAvailableBalance[req.seeker] = seekerAvailableBalance[req.seeker].add(tokensPerRequest);
         
-        emit RequestDenied(user, req.seeker, _hash);
+        emit RequestDenied(user, req.seeker, _hash, index);
     }
 
     /// @notice User completes the request
@@ -336,18 +341,20 @@ contract Escrow is Deputable {
     function userCompleteRequest(bytes32 _hash, bytes32 _locatorHash) public {
         address user = msg.sender;
 
-        int i = getDataRequestIndexByHash(user, _hash);
+        // TODO: Optimize by getting request index outside this transaction
+        // and passing it to the function
+        int index = getDataRequestIndexByHash(user, _hash);
 
-        require(i >= 0, "Data request not found for the hash provided");
+        require(index >= 0, "Data request not found for the hash provided");
 
-        DataRequest storage req = requests[user][uint(i)];
+        DataRequest storage req = requests[user][uint(index)];
 
         require(req.status == RequestStatus.Initial, "Incorrect status");
 
         req.locatorHash = _locatorHash;
         req.status = RequestStatus.UserCompleted;
 
-        emit RequestCompleted(user, req.seeker, _hash);
+        emit RequestCompleted(user, req.seeker, _hash, index);
     }
 
     /// @notice Seeker can cancel a request that is still in Initial state
@@ -356,11 +363,11 @@ contract Escrow is Deputable {
     function seekerCancelRequest(address _user, bytes32 _hash) public {
         address seeker = msg.sender;
 
-        int i = getDataRequestIndexByHash(_user, _hash);
+        int index = getDataRequestIndexByHash(_user, _hash);
 
-        require(i >= 0, "Data request not found for the hash provided");
+        require(index >= 0, "Data request not found for the hash provided");
 
-        DataRequest storage req = requests[_user][uint(i)];
+        DataRequest storage req = requests[_user][uint(index)];
 
         require(req.status == RequestStatus.Initial, "Only requests in Initial state may be cancelled");
 
@@ -379,11 +386,11 @@ contract Escrow is Deputable {
     function seekerCompleted(address _user, bytes32 _hash) public {
         address seeker = msg.sender;
 
-        int i = getDataRequestIndexByHash(_user, _hash);
+        int index = getDataRequestIndexByHash(_user, _hash);
 
-        require(i >= 0, "Data request not found for the hash provided");
+        require(index >= 0, "Data request not found for the hash provided");
 
-        DataRequest storage req = requests[_user][uint(i)];
+        DataRequest storage req = requests[_user][uint(index)];
 
         require(req.status == RequestStatus.UserCompleted, "Only requests in UserCompleted state may be completed by seeker");
 
@@ -392,15 +399,17 @@ contract Escrow is Deputable {
 
         (issuer, revoked) = certificates.getCertificateMetadata(_user, _hash);
 
+        require(issuer > 0, "Certificate doesn't exist");
+
+        req.status = RequestStatus.SeekerCompleted;
+
         seekerInflightBalance[seeker] = seekerInflightBalance[seeker].sub(tokensPerRequest);
 
         uint issuerRewardTokens = tokensPerRequest.mul(issuerReward).div(100);
         uint userReward = tokensPerRequest - issuerRewardTokens;
-
+        
         token.transfer(issuer, issuerReward);
 
         token.transfer(_user, userReward);
-
-        req.status = RequestStatus.SeekerCompleted;
     }
 }

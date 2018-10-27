@@ -6,3 +6,4 @@ build
 scTopics
 npm-debug.log
 package-lock.json
+/publish/abi

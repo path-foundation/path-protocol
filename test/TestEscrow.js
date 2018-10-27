@@ -12,18 +12,16 @@ const Issuers = artifacts.require('Issuers');
 const PublicKeys = artifacts.require('PublicKeys');
 
 const { sha256 } = require('js-sha256');
-//const EthCrypto = require('eth-crypto');
 
 const decimals = 10 ** 6;
 const requestPrice = 30 * decimals;
 
-const getBalance = (acct) =>
-    new Promise((resolve, reject) => {
-        Escrow.web3.eth.getBalance(acct, (error, balance) => {
-            if (error) reject(error);
-            else resolve(balance);
-        });
+const getBalance = (acct) => new Promise((resolve, reject) => {
+    Escrow.web3.eth.getBalance(acct, (error, balance) => {
+        if (error) reject(error);
+        else resolve(balance);
     });
+});
 
 // Shoudl match RequestStatus enum in Escrow contract
 const RequestStatus = {
@@ -92,6 +90,7 @@ contract('Escrow', async (accounts) => {
         await certificates.addCertificate(user1, cert1sha, { from: issuer1 });
         await certificates.addCertificate(user1, cert2sha, { from: issuer2 });
         await certificates.addCertificate(user2, cert3sha, { from: issuer2 });
+        await certificates.addCertificate(user2, cert4sha, { from: issuer2 });
         // Revoke this cert
         await certificates.revokeCertificate(user2, 0, { from: issuer2 });
 
@@ -192,7 +191,7 @@ contract('Escrow', async (accounts) => {
         assert.equal(balanceEscrowRefund.toNumber(), balanceEscrow.toNumber());
     });
 
-    it('Attempt gettign a data request index by non-existing hash', async () => {
+    it('Attempt getting a data request index by non-existing hash', async () => {
         const i = await escrow.getDataRequestIndexByHash(user1, `0x${sha256('blah')}`);
         assert.ok(i.equals(-1));
     });
@@ -236,8 +235,7 @@ contract('Escrow', async (accounts) => {
         assert.ok(userNewBalance.minus(userBalance).equals(1 * (10 ** 18)), 'User balance should increase');
 
         // Retrieve the request
-        const [seeker, status, hash, timestamp] =
-            await escrow.getDataRequestByHash(user1, cert1sha);
+        const [seeker, status, hash, timestamp] = await escrow.getDataRequestByHash(user1, cert1sha);
 
         assert.equal(seeker, seeker1, 'Seeker should match');
         assert.equal(status, RequestStatus.Initial, 'Status should be 1 (Initial)');
@@ -256,8 +254,7 @@ contract('Escrow', async (accounts) => {
         await escrow.submitRequest(user1, cert2sha, { from: seeker1 });
 
         // Retrieve the request by hash
-        const [seeker, status, hash, timestamp] =
-            await escrow.getDataRequestByHash(user1, cert2sha);
+        const [seeker, status, hash, timestamp] = await escrow.getDataRequestByHash(user1, cert2sha);
 
         assert.equal(seeker, seeker1, 'Seeker should match');
         assert.equal(status, RequestStatus.Initial, 'Status should be 1 (Initial)');
@@ -309,8 +306,7 @@ contract('Escrow', async (accounts) => {
 
     it('User1 accepts/completes the request for cert2 initiated by seeker1', async () => {
         await escrow.userCompleteRequest(cert2sha, location1sha, { from: user1 });
-        const [seeker, status, hash] =
-            await escrow.getDataRequestByHash(user1, cert2sha);
+        const [seeker, status, hash] = await escrow.getDataRequestByHash(user1, cert2sha);
 
         assert.equal(seeker, seeker1, 'Seeker should match');
         assert.equal(status, RequestStatus.UserCompleted, 'Status should be 2 (UserCompleted)');
@@ -337,8 +333,7 @@ contract('Escrow', async (accounts) => {
 
     it('Seeker1 validates/completes the request for cert2', async () => {
         await escrow.seekerCompleted(user1, cert2sha, { from: seeker1 });
-        const [seeker, status, hash] =
-            await escrow.getDataRequestByHash(user1, cert2sha);
+        const [seeker, status, hash] = await escrow.getDataRequestByHash(user1, cert2sha);
 
         // TODO: check balances of seeker, issuer and user
         assert.equal(seeker, seeker1, 'Seeker should match');
@@ -349,7 +344,7 @@ contract('Escrow', async (accounts) => {
     it('Seeker1 attempts to complete the request for a non-existing cert', async () => {
         try {
             await escrow.seekerCompleted(user1, `0x${sha256('blah')}`, { from: seeker1 });
-            assert.fail('Shoudln\'t be here');
+            assert.fail('Shouldn\'t be here');
         } catch (error) {
             assert.ok(true);
         }
@@ -364,8 +359,7 @@ contract('Escrow', async (accounts) => {
         const inprogressAvailableBalance = await escrow.seekerAvailableBalance(seeker1);
         const inprogressInflightBalance = await escrow.seekerInflightBalance(seeker1);
 
-        const [seekerBefore, statusBefore] =
-            await escrow.getDataRequestByHash(user2, cert4sha);
+        const [seekerBefore, statusBefore] = await escrow.getDataRequestByHash(user2, cert4sha);
 
         assert.equal(seekerBefore, seeker1, 'Seeker should match');
         assert.equal(statusBefore, RequestStatus.Initial, 'Status should be 1 (Initial)');
@@ -375,8 +369,7 @@ contract('Escrow', async (accounts) => {
         const cancelledAvailableBalance = await escrow.seekerAvailableBalance(seeker1);
         const cancelledInflightBalance = await escrow.seekerInflightBalance(seeker1);
 
-        const [seekerAfter, statusAfter, hash] =
-            await escrow.getDataRequestByHash(user2, cert4sha);
+        const [seekerAfter, statusAfter, hash] = await escrow.getDataRequestByHash(user2, cert4sha);
 
         assert.equal(seekerAfter, seeker1, 'Seeker should match');
         assert.equal(statusAfter, RequestStatus.SeekerCancelled, 'Status should be 6 (SeekerCancelled)');

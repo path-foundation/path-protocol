@@ -24,23 +24,23 @@
     "eth-crypto": "^1.2.3",
     "ethereumjs-abi": "^0.6.5",
     "js-sha256": "^0.9.0",
-    "js-sha3": "^0.7.0",
-    "mustache": "^2.3.0",
+    "js-sha3": "^0.8.0",
+    "mustache": "^3.0.0",
     "openzeppelin-solidity": "^1.10.0",
     "shelljs": "^0.8.2",
     "truffle-contract": "^3.0.6",
     "web3": "^1.0.0-beta.34"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.9.1",
+    "eslint": "^5.7.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
     "mocha": "^5.2.0",
     "solidity-coverage": "^0.5.5",
     "truffle-core": "^4.1.13",
-    "truffle-hdwallet-provider": "0.0.5"
+    "truffle-hdwallet-provider": "0.0.6"
   }
 }

@@ -2,9 +2,10 @@
 
 - ### [`Certificates`](#Certificates)
     * [**`addCertificate(address _user, bytes32 _hash)`**](#addcertificateaddress-_user-bytes32-_hash)
+    * [**`certificates(address _address, uint256 _uint256)`**](#certificatesaddress-_address-uint256-_uint256)
     * [**`deputy()`**](#deputy)
     * [**`getCertificateAt(address _user, uint256 _index)`**](#getcertificateataddress-_user-uint256-_index)
-    * [**`getCertificateCount(address _user)`**](#getcertificatecountaddress-_user)
+    * [**`getCertificateCount(address _user, bool _includeRevoked)`**](#getcertificatecountaddress-_user-bool-_includerevoked)
     * [**`getCertificateIndex(address _user, bytes32 _hash)`**](#getcertificateindexaddress-_user-bytes32-_hash)
     * [**`getCertificateMetadata(address _user, bytes32 _hash)`**](#getcertificatemetadataaddress-_user-bytes32-_hash)
     * [**`issuersContract()`**](#issuerscontract)
@@ -81,6 +82,26 @@ Inputs
 
 
 
+## **`certificates(address _address, uint256 _uint256)`**
+
+
+
+Inputs
+
+ type | name | description 
+--- | --- | ---
+ *address* | `_address` |  
+ *uint256* | `_uint256` |  
+
+Outputs
+
+ type | name | description
+ --- | --- | --- 
+ *bytes32* | `hash` |  
+ *address* | `issuer` |  
+ *bool* | `revoked` |  
+
+
 ## **`deputy()`**
 
 
@@ -114,7 +135,7 @@ Outputs
  *bool* | `revoked` | Flag showing whether the certificate has been revoked by its issuer 
 
 
-## **`getCertificateCount(address _user)`**
+## **`getCertificateCount(address _user, bool _includeRevoked)`**
 
 ### _Get the number of certificates for a given user_
 
@@ -124,6 +145,7 @@ Inputs
  type | name | description 
 --- | --- | ---
  *address* | `_user` | User address 
+ *bool* | `_includeRevoked` |  
 
 Outputs
 
@@ -198,6 +220,7 @@ Outputs
 
 ## **`renounceOwnership()`**
 
+### _Renouncing to ownership will leave the contract without an owner. It will not be possible to call the functions with the &#x60;onlyOwner&#x60; modifier anymore._
 
 > ##### _Allows the current owner to relinquish control of the contract._
 
@@ -510,6 +533,7 @@ Inputs
 
 ## **`renounceOwnership()`**
 
+### _Renouncing to ownership will leave the contract without an owner. It will not be possible to call the functions with the &#x60;onlyOwner&#x60; modifier anymore._
 
 > ##### _Allows the current owner to relinquish control of the contract._
 
@@ -779,6 +803,7 @@ Inputs
 
 ## **`renounceOwnership()`**
 
+### _Renouncing to ownership will leave the contract without an owner. It will not be possible to call the functions with the &#x60;onlyOwner&#x60; modifier anymore._
 
 > ##### _Allows the current owner to relinquish control of the contract._
 

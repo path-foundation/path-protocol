@@ -23,6 +23,7 @@ module.exports = {
         }],
         // off
         "no-console": "off",
+        "no-plusplus": "off",
         "id-length": "off",
         "func-names": "off",
         "spaced-comment": "off",

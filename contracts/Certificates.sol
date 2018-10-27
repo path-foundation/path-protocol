@@ -9,7 +9,7 @@ import "./Issuers.sol";
 /// by Seekers when verifying a certificate received from a User
 contract Certificates is Deputable {
     /// @notice mapping of user addresses to array of their certificates
-    mapping (address => Certificate[]) certificates;
+    mapping (address => Certificate[]) public certificates;
 
     /// @title Array of all user addresses in the system
     address[] public users;
@@ -90,7 +90,7 @@ contract Certificates is Deputable {
 
         int i = getCertificateIndex(_user, _hash);
 
-        if (i >= 0) {
+        if(i >= 0) {
             _issuer = certs[uint(i)].issuer;
             _revoked = certs[uint(i)].revoked;
         }
@@ -122,7 +122,7 @@ contract Certificates is Deputable {
     /// @return revoked Flag showing whether the certificate has been revoked by its issuer
     function getCertificateAt(address _user, uint _index) public view 
         returns(bytes32 hash, address issuer, bool revoked) {
-        
+
         Certificate[] storage certs = certificates[_user];
 
         if (certs.length > _index) {
