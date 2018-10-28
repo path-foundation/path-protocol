@@ -1,7 +1,7 @@
 /* eslint object-shorthand: off */
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
-const mnemonic = process.env.INFURA_MNEMONIC;
+const mnemonic = process.env.TEST_MNEMONIC;
 const apiKey = process.env.INFURA_API_KEY;
 module.exports = {
     solc: {

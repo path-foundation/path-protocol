@@ -1,9 +1,11 @@
-/* eslint no-return-assign: off */
+/* eslint no-return-assign: off, max-len:off */
 const {
     artifacts,
     contract,
     assert,
 } = global;
+
+const { sha256 } = require('js-sha256');
 
 const Escrow = artifacts.require('Escrow');
 const PathToken = artifacts.require('PathToken');
@@ -11,7 +13,7 @@ const Certificates = artifacts.require('Certificates');
 const Issuers = artifacts.require('Issuers');
 const PublicKeys = artifacts.require('PublicKeys');
 
-const { sha256 } = require('js-sha256');
+const { generateAddressesFromSeed } = require('./util/keys');
 
 const decimals = 10 ** 6;
 const requestPrice = 30 * decimals;
@@ -23,7 +25,7 @@ const getBalance = (acct) => new Promise((resolve, reject) => {
     });
 });
 
-// Shoudl match RequestStatus enum in Escrow contract
+// Should match RequestStatus enum in Escrow contract
 const RequestStatus = {
     None: 0,
     Initial: 1,
@@ -34,9 +36,9 @@ const RequestStatus = {
     SeekerCancelled: 6,
 };
 
-// Public/private keys for mnemonic:
-// 'kiwi just service vital feature rural vibrant copy pledge useless fee forum'
-const pk = require('./pk.json');
+const pk = {};
+generateAddressesFromSeed(process.env.TEST_MNEMONIC, 10)
+    .forEach(key => { pk[key.address] = { public: key.publicKey, private: key.privateKey }; });
 
 //const keys = require('./util/keys');
 const cert = require('./samples/certifcicates/cert');

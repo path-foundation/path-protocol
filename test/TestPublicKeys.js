@@ -4,9 +4,13 @@ const {
     assert,
 } = global;
 
-const pk = require('./pk.json');
+const { generateAddressesFromSeed } = require('./util/keys');
 
 const PublicKeys = artifacts.require('PublicKeys');
+
+const pk = {};
+generateAddressesFromSeed(process.env.TEST_MNEMONIC, 10)
+    .forEach(key => { pk[key.address] = { public: key.publicKey, private: key.privateKey }; });
 
 contract('PublicKeys', async (accounts) => {
     const [seeker1, seeker2] = accounts;
