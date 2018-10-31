@@ -2,6 +2,8 @@ dist: trusty
 language: node_js
 node_js:
   - "8.12.0"
+env:
+  - TEST_MNEMONIC="kiwi just service vital feature rural vibrant copy pledge useless fee forum"
 install: 
   - npm install
   - npm install -g truffle

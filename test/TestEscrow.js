@@ -40,6 +40,8 @@ const pk = {};
 generateAddressesFromSeed(process.env.TEST_MNEMONIC, 10)
     .forEach(key => { pk[key.address] = { public: key.publicKey, private: key.privateKey }; });
 
+console.log(`TEST MNEMONIC: ${process.env.TEST_MNEMONIC}`);
+
 //const keys = require('./util/keys');
 const cert = require('./samples/certifcicates/cert');
 
