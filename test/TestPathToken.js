@@ -23,9 +23,13 @@ contract('PathToken', (accounts) => {
         [ownerAddress, tempOwnerAddress, user1Address, user2Address] = accounts;
 
         instance = await PathToken.deployed();
+    });
 
+    it('Check the contract owner', async () => {
         const owner = await instance.owner();
         console.log(`Owner: ${owner}`);
+
+        assert.equal(owner, ownerAddress, 'Owner address doesn\'t match');
     });
 
     it('Test rejecting ETH payment into the token contract', async () => {
@@ -41,11 +45,6 @@ contract('PathToken', (accounts) => {
     });
 
     describe('Test the Claimable interface', () => {
-        it('Test retrieving current owner', async () => {
-            const owner = await instance.owner();
-            assert.equal(owner, ownerAddress, 'Owner address shouls match the first account address');
-        });
-
         it('Test changing ownership', async () => {
             // Transfer the ownership
             await instance.transferOwnership(tempOwnerAddress);
@@ -103,38 +102,50 @@ contract('PathToken', (accounts) => {
     });
 
     it('Test transferring to 0x0 address', async () => {
-        await instance.transfer('0x0', 1)
-            .then(() => {
-                // if we get here, the transaction wasn't rejected, which is an unexpected behavior
-                assert.fail();
-            })
-            .catch(() => {
-                assert.ok(true);
-            });
+        try {
+            await instance.transfer('0x0', 1);
+            // if we get here, the transaction wasn't rejected, which is an unexpected behavior
+            assert.fail();
+        } catch (error) {
+            assert.ok(true);
+        }
     });
 
-    it('Test transferring some tokens from Owner to User1', async () => {
-        await instance.transfer(user1Address, 100);
+    it('Transfer tokens from Owner to User1', async () => {
+        const ownerBalance = await instance.balanceOf(ownerAddress);
         const user1Balance = await instance.balanceOf(user1Address);
 
-        assert.ok(user1Balance.equals(100), 'User 1 balance is wrong');
+        await instance.transfer(user1Address, 100);
+
+        const ownerBalance1 = await instance.balanceOf(ownerAddress);
+        const user1Balance1 = await instance.balanceOf(user1Address);
+
+        assert.ok(ownerBalance.sub(100).equals(ownerBalance1), 'Owner balance is wrong');
+        assert.ok(user1Balance.add(100).equals(user1Balance1), 'User 1 balance is wrong');
     });
 
-    it('Should return the correct allowance amount after approval', async () => {
-        // Approve owner to transfer 100 tokens from user1
-        await instance.approve(ownerAddress, 100, { from: user1Address });
-        const allowance = await instance.allowance(user1Address, ownerAddress);
-        assert.ok(allowance.equals(100));
+    it('Approve User1 to transfer 234 tokens from Owner', async () => {
+        // Approve User1 to transfer 234 tokens from Owner
+        await instance.approve(user1Address, 234, { from: ownerAddress });
+
+        const allowance = await instance.allowance(ownerAddress, user1Address);
+
+        console.log(`Allowance: ${allowance.toNumber()}`);
+
+        assert.ok(allowance.equals(234));
     });
 
-    it('Owner transfers 40 tokens from user1 to user2', async () => {
-        await instance.transferFrom(user1Address, user2Address, 40);
+    it('User1 transfers 234 tokens from Owner to User2', async () => {
+        const ownerBalance = await instance.balanceOf(ownerAddress);
+        const user2Balance = await instance.balanceOf(user2Address);
 
-        const user1balance = await instance.balanceOf(user1Address);
-        const user2balance = await instance.balanceOf(user2Address);
+        await instance.transferFrom(ownerAddress, user2Address, 234, { from: user1Address });
 
-        assert.ok(user1balance.equals(60), 'User1 balance should be 60');
-        assert.ok(user2balance.equals(40), 'User2 balance should be 40');
+        const ownerBalance1 = await instance.balanceOf(ownerAddress);
+        const user2Balance1 = await instance.balanceOf(user2Address);
+
+        assert.ok(ownerBalance.sub(234).equals(ownerBalance1), 'Owner balance is wrong');
+        assert.ok(user2Balance.add(234).equals(user2Balance1), 'User 2 balance is wrong');
     });
 
     it('Test increasing allowance', async () => {
