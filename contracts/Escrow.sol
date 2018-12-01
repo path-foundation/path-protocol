@@ -123,6 +123,8 @@ contract Escrow is Deputable {
         // Make sure seeker allowed transferring the tokens
         require(token.allowance(seeker, this) >= _amount, "Transfer not approved");
 
+        require(token.balanceOf(seeker) >= _amount, "Insufficient balance");
+
         // transfer tokens from seeker's account
         token.transferFrom(seeker, this, _amount);
 

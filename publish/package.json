@@ -1,6 +1,6 @@
 {
   "name": "path-protocol-artifacts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Path protocol smart contracts artifacts",
   "main": "index.js",
   "scripts": {

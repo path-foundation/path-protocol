@@ -3,7 +3,7 @@
 
 PACKAGE_NAME="path-protocol-artifacts"
 
-if [ "$1" = "deploy"  ] || [ $# -eq 0 ]; then
+if [ "$1" = "deploy"  ] || [ $# -eq 0 ] || [ "$1" = "prepare" ]; then
 
     CURRENT_DIR=$(pwd)
     echo "Current folder: $CURRENT_DIR"
@@ -52,10 +52,12 @@ if [ "$1" = "deploy"  ] || [ $# -eq 0 ]; then
         # node ./extract.js "$TEMP_DIR/$i"
     done
 
-    npm version patch -m "Dev Deploy: Updating $PACKAGE_NAME npm version: %s"
-    npm publish --registry https://registry.npmjs.com/ --tag "dev"
 
-    rm -rf $TEMP_DIR
+    if ! [ "$1" = "prepare" ]; then
+        npm version patch -m "Dev Deploy: Updating $PACKAGE_NAME npm version: %s"
+        npm publish --registry https://registry.npmjs.com/ --tag "dev"
+        rm -rf $TEMP_DIR
+    fi
 
     cd $CURRENT_DIR
     echo "Done!"
