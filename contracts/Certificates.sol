@@ -83,7 +83,7 @@ contract Certificates is Deputable {
     /// @return _issuer Address of the certificate issuer
     /// @return _revoked Flag showing whether the certificate has been revoked by its issuer
     function getCertificateMetadata(address _user, bytes32 _hash) public view
-        returns (address _issuer, bool _revoked) {
+        returns (address issuer, bool revoked) {
         
         // Get certificates array
         Certificate[] storage certs = certificates[_user];
@@ -91,8 +91,8 @@ contract Certificates is Deputable {
         int i = getCertificateIndex(_user, _hash);
 
         if(i >= 0) {
-            _issuer = certs[uint(i)].issuer;
-            _revoked = certs[uint(i)].revoked;
+            issuer = certs[uint(i)].issuer;
+            revoked = certs[uint(i)].revoked;
         }
     }
 
