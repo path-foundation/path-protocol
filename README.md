@@ -8,13 +8,13 @@ PATH protocol smart contracts.
 
 Prerequisites:
 * Install node.js ^8.11.3 and npm
+* For MacOS install command line tools, by running `xcode-select --install`
+* For Windows install build tools, by running `npm install -g windows-build-tools`
 * Install truffle: npm install -g truffle
 * Install Ganache: http://truffleframework.com/ganache
 * Run Ganache
 * npm install -g truffle-flattener # Optional, if you want to flatten contracts
 * Solidity (by Juan Blanco) extension for VS Code # Optional
-* For MacOS install command line tools, by running `xcode-select --install`
-* For Windows install build tools, by running `npm install -g windows-build-tools`
 * Set TEST_MNEMONIC environment variable to the same mnemonic as used by Ganache
 
 Prereqs for building documentation:
