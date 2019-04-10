@@ -7,6 +7,7 @@ PATH protocol smart contracts.
 ### How do I get set up? ###
 
 Prerequisites:
+* On Windows, install [OpenSSL-Win64](https://slproweb.com/products/Win32OpenSSL.html) (1.0.2 version - version 1.1.1 is missing a library needed by eccrypto)
 * Install node.js ^8.11.3 and npm
 * For MacOS install command line tools, by running `xcode-select --install`
 * For Windows install build tools, by running `npm install -g windows-build-tools` from Admin Powershell
