@@ -29,6 +29,10 @@ Prereqs for building documentation:
         * sudo add-apt-repository ppa:ethereum/ethereum -y
         * sudo apt-get update
         * sudo apt-get install solc
+    * Windows:
+        * Download the latest from https://github.com/ethereum/solidity/releases
+        * Unzip to c:\Program Files\windows-solidity
+        * Add c:\Program Files\windows-solidity to PATH env variable
 
 Build:
 * `https://github.com/path-foundation/path-protocol.git && cd path-protocol`
