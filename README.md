@@ -26,6 +26,7 @@ Prereqs for building documentation:
         * brew tap ethereum/ethereum
         * brew install solidity
     * Ubuntu:
+        * sudo apt-get install software-properties-common
         * sudo add-apt-repository ppa:ethereum/ethereum -y
         * sudo apt-get update
         * sudo apt-get install solc
