@@ -11,6 +11,7 @@ Prerequisites:
 * Install node.js ^8.11.3 and npm
 * For MacOS install command line tools, by running `xcode-select --install`
 * For Windows install build tools, by running `npm install -g windows-build-tools` from Admin Powershell
+* For Linux, install build-essentials: `sudo apt-get install build-essential`
 * Install truffle: npm install -g truffle
 * Install Ganache: http://truffleframework.com/ganache
 * Run Ganache
