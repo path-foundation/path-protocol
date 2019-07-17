@@ -37,7 +37,7 @@ Prereqs for building documentation:
         * Add c:\Program Files\windows-solidity to PATH env variable
 
 Build:
-* `https://github.com/path-foundation/path-protocol.git && cd path-protocol`
+* `git clone https://github.com/path-foundation/path-protocol.git && cd path-protocol`
 * `npm install`
 * `truffle compile`
 * `truffle migrate`
