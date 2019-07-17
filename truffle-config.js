@@ -4,11 +4,14 @@ const HDWalletProvider = require('truffle-hdwallet-provider');
 const mnemonic = process.env.TEST_MNEMONIC;
 const apiKey = process.env.INFURA_API_KEY;
 module.exports = {
-    solc: {
-        optimizer: {
-            enabled: true,
-            runs: 200,
-        },
+    compilers: {
+        solc: {
+            version: "0.4.24",
+            optimizer: {
+                enabled: true,
+                runs: 200,
+            },
+        }
     },
     networks: {
         development: {
