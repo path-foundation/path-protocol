@@ -22,19 +22,23 @@ contract('PublicKeys', async (accounts) => {
     });
 
     it('Attempt adding seeker1 public key for seeker2 (should fail)', async () => {
-        const pub1 = `0x${pk[seeker1].public}`;
+        const pub1 = `0x${pk[seeker1.toLowerCase()].public}`;
         try {
             await instance.addPublicKey(pub1, { from: seeker2 });
-            assert.fail('Shouldn\'t get here');
+            assert.fail('Should fail');
         } catch (error) {
-            assert.ok(true);
+            if (error.reason == "Sender's address doesn't match the public key") {
+                assert.ok(true);
+            } else {
+                assert.fail("Failed with a wrong reason")
+            }
         }
     });
 
     it('Adding seeker public keys', async () => {
-        const pub1 = `0x${pk[seeker1].public}`;
+        const pub1 = `0x${pk[seeker1.toLowerCase()].public}`;
         await instance.addPublicKey(pub1, { from: seeker1 });
-        await instance.addPublicKey(`0x${pk[seeker2].public}`, { from: seeker2 });
+        await instance.addPublicKey(`0x${pk[seeker2.toLowerCase()].public}`, { from: seeker2 });
 
         // Retrieve stored pub key
         const pub1Test = await instance.publicKeyStore(seeker1);

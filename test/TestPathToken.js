@@ -92,13 +92,13 @@ contract('PathToken', (accounts) => {
     it('Test initial supply', async () => {
         const totalSupply = await instance.totalSupply();
 
-        assert.ok(totalSupply.equals('500000000000000'), 'Total supply should be 500,000,000,000,000');
+        assert.equal(totalSupply.toString(), '500000000000000', 'Total supply should be 500,000,000,000,000');
     });
 
     it("Test initial owner's balance", async () => {
         const ownersBalance = await instance.balanceOf(ownerAddress);
 
-        assert.ok(ownersBalance.equals('500000000000000'), 'Initial balance of the owner should be 500,000,000,000,000');
+        assert.equal(ownersBalance.toString(), '500000000000000', 'Initial balance of the owner should be 500,000,000,000,000');
     });
 
     it('Test transferring to 0x0 address', async () => {
@@ -120,8 +120,8 @@ contract('PathToken', (accounts) => {
         const ownerBalance1 = await instance.balanceOf(ownerAddress);
         const user1Balance1 = await instance.balanceOf(user1Address);
 
-        assert.ok(ownerBalance.sub(100).equals(ownerBalance1), 'Owner balance is wrong');
-        assert.ok(user1Balance.add(100).equals(user1Balance1), 'User 1 balance is wrong');
+        assert.ok(ownerBalance.addn(-100).eq(ownerBalance1), 'Owner balance is wrong');
+        assert.ok(user1Balance.addn(100).eq(user1Balance1), 'User 1 balance is wrong');
     });
 
     it('Approve User1 to transfer 234 tokens from Owner', async () => {
@@ -132,7 +132,7 @@ contract('PathToken', (accounts) => {
 
         console.log(`Allowance: ${allowance.toNumber()}`);
 
-        assert.ok(allowance.equals(234));
+        assert.ok(allowance.eqn(234));
     });
 
     it('User1 transfers 234 tokens from Owner to User2', async () => {
@@ -144,8 +144,8 @@ contract('PathToken', (accounts) => {
         const ownerBalance1 = await instance.balanceOf(ownerAddress);
         const user2Balance1 = await instance.balanceOf(user2Address);
 
-        assert.ok(ownerBalance.sub(234).equals(ownerBalance1), 'Owner balance is wrong');
-        assert.ok(user2Balance.add(234).equals(user2Balance1), 'User 2 balance is wrong');
+        assert.ok(ownerBalance.subn(234).eq(ownerBalance1), 'Owner balance is wrong');
+        assert.ok(user2Balance.addn(234).eq(user2Balance1), 'User 2 balance is wrong');
     });
 
     it('Test increasing allowance', async () => {
@@ -154,15 +154,17 @@ contract('PathToken', (accounts) => {
         // Allow owner to spend 420 tokens from user1 balance
         await instance.approve(ownerAddress, 420, { from: user1Address });
         // Now increase that approval by 47 tokens
-        await instance.contract.increaseApproval.sendTransaction(
+
+       await instance.increaseApproval(
             ownerAddress,
             47,
             { from: user1Address }
         );
+        
         // Check owner's allowance for spending user1's tokens - should be 467
         const allowance = await instance.allowance(user1Address, ownerAddress);
 
-        assert.ok(allowance.equals(467));
+        assert.ok(allowance.eqn(467));
     });
 
     it('Test transfer with callback', async () => {
@@ -181,7 +183,7 @@ contract('PathToken', (accounts) => {
         const balance = await instance.balanceOf(contractWithCallback.address);
 
         // Cheeck contract's balance
-        assert.ok(balance.equals(1000));
+        assert.ok(balance.eqn(1000));
 
         const user = await contractWithCallback.user();
         const seekerPublicKey = await contractWithCallback.seekerPublicKey();

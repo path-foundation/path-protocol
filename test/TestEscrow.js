@@ -99,7 +99,7 @@ contract('Escrow', async (accounts) => {
         await certificates.revokeCertificate(user2, 0, { from: issuer2 });
 
         // Add seeker1'a public keys (register the seeker)
-        await publicKeys.addPublicKey(`0x${pk[seeker1].public}`, { from: seeker1 });
+        await publicKeys.addPublicKey(`0x${pk[seeker1.toLowerCase()].public}`, { from: seeker1 });
         // Give seeker1 1000 PATH tokens (1000 * 10^6)
         await token.transfer(seeker1, 1000 * decimals, { from: owner });
     });
@@ -107,13 +107,16 @@ contract('Escrow', async (accounts) => {
     it('Setting tokens per request', async () => {
         await escrow.setTokensPerRequest(requestPrice, { from: owner });
 
-        assert.ok((await escrow.tokensPerRequest()).equals(requestPrice), 'Tokens per request should match the set amount');
+        assert.ok((await escrow.tokensPerRequest()).eqn(requestPrice), 'Tokens per request should match the set amount');
+
+        
     });
 
     it('Setting issuer reward', async () => {
         await escrow.setIssuerReward(60, { from: owner });
 
-        assert.ok((await escrow.issuerReward()).equals(60), 'Issuer reward should match the set amount');
+        assert.ok((await escrow.issuerReward()).eqn(60), 'Issuer reward should match the set amount');
+
     });
 
     it('Attempt to increase available balance without setting allowance', async () => {
@@ -197,7 +200,7 @@ contract('Escrow', async (accounts) => {
 
     it('Attempt getting a data request index by non-existing hash', async () => {
         const i = await escrow.getDataRequestIndexByHash(user1, `0x${sha256('blah')}`);
-        assert.ok(i.equals(-1));
+        assert.ok(i.eqn(-1));
     });
 
     it('Attempt to place a request by unregistered seeker2', async () => {
@@ -236,10 +239,10 @@ contract('Escrow', async (accounts) => {
 
         const userNewBalance = await getBalance(user1);
 
-        assert.ok(userNewBalance.minus(userBalance).equals(1 * (10 ** 18)), 'User balance should increase');
+        assert.equal(userNewBalance - userBalance, 1 * (10 ** 18), 'User balance should increase');
 
         // Retrieve the request
-        const [seeker, status, hash, timestamp] = await escrow.getDataRequestByHash(user1, cert1sha);
+        const {seeker, status, hash, timestamp} = await escrow.getDataRequestByHash(user1, cert1sha);
 
         assert.equal(seeker, seeker1, 'Seeker should match');
         assert.equal(status, RequestStatus.Initial, 'Status should be 1 (Initial)');
@@ -248,7 +251,7 @@ contract('Escrow', async (accounts) => {
         const ts = timestamp.toNumber();
         const now = new Date().getTime() / 1000;
 
-        assert.ok(ts > now - 10, 'Hash should match');
+        assert.ok(ts > now - 20, 'Hash should match');
     });
 
     it('Place a request by registered seeker1 that has available balance in the escrow contract', async () => {
@@ -258,7 +261,7 @@ contract('Escrow', async (accounts) => {
         await escrow.submitRequest(user1, cert2sha, { from: seeker1 });
 
         // Retrieve the request by hash
-        const [seeker, status, hash, timestamp] = await escrow.getDataRequestByHash(user1, cert2sha);
+        const {seeker, status, hash, timestamp} = await escrow.getDataRequestByHash(user1, cert2sha);
 
         assert.equal(seeker, seeker1, 'Seeker should match');
         assert.equal(status, RequestStatus.Initial, 'Status should be 1 (Initial)');
@@ -267,24 +270,25 @@ contract('Escrow', async (accounts) => {
         const ts = timestamp.toNumber();
         const now = new Date().getTime() / 1000;
 
-        assert.ok(ts > now - 10, 'Hash should match');
+        assert.ok(ts > now - 20, 'Hash should match');
 
         // Retrieve the request by index
         const i = await escrow.getDataRequestIndexByHash(user1, cert2sha);
-        const [seekerI, statusI, hashI, timestampI] = await escrow.getDataRequestByIndex(user1, i);
+        const dr = await escrow.getDataRequestByIndex(user1, i);
+        const {seeker: seekerI, status: statusI, hash: hashI, timestamp: timestampI} = await escrow.getDataRequestByIndex(user1, i);
 
         assert.equal(seeker, seekerI, 'Seeker should match');
-        assert.ok(status.equals(statusI), 'Status should match');
+        assert.ok(status.eq(statusI), 'Status should match');
         assert.equal(hash, hashI, 'Hash should match');
-        assert.ok(timestamp.equals(timestampI), 'Timestamp should match');
+        assert.ok(timestamp.eq(timestampI), 'Timestamp should match');
     });
 
     it('Check number of requests for a user', async () => {
         const user1count = await escrow.getDataRequestCount(user1);
         const user2count = await escrow.getDataRequestCount(user2);
 
-        assert.ok(user1count.equals(2), 'User1 should have 2 requests');
-        assert.ok(user2count.equals(0), 'User2 should have 0 requests');
+        assert.ok(user1count.eqn(2), 'User1 should have 2 requests');
+        assert.ok(user2count.eqn(0), 'User2 should have 0 requests');
     });
 
     it('User attempts to deny a request for nonexisting hash', async () => {
@@ -304,13 +308,13 @@ contract('Escrow', async (accounts) => {
         const newBalance = await escrow.seekerAvailableBalance(seeker1);
         const newInflightBalance = await escrow.seekerInflightBalance(seeker1);
 
-        assert.ok(newBalance.equals(prevBalance + requestPrice), 'New avail balance should include the refund for denied request');
-        assert.ok(newInflightBalance.equals(prevInflightBalance - requestPrice), 'New inflight balance should exclude the refund for denied request');
+        assert.ok(newBalance.eqn(prevBalance.toNumber() + requestPrice), 'New avail balance should include the refund for denied request');
+        assert.ok(newInflightBalance.eqn(prevInflightBalance.toNumber() - requestPrice), 'New inflight balance should exclude the refund for denied request');
     });
 
     it('User1 accepts/completes the request for cert2 initiated by seeker1', async () => {
         await escrow.userCompleteRequest(cert2sha, location1sha, { from: user1 });
-        const [seeker, status, hash] = await escrow.getDataRequestByHash(user1, cert2sha);
+        const {seeker, status, hash} = await escrow.getDataRequestByHash(user1, cert2sha);
 
         assert.equal(seeker, seeker1, 'Seeker should match');
         assert.equal(status, RequestStatus.UserCompleted, 'Status should be 2 (UserCompleted)');
@@ -337,7 +341,7 @@ contract('Escrow', async (accounts) => {
 
     it('Seeker1 validates/completes the request for cert2', async () => {
         await escrow.seekerCompleted(user1, cert2sha, { from: seeker1 });
-        const [seeker, status, hash] = await escrow.getDataRequestByHash(user1, cert2sha);
+        const {seeker, status, hash} = await escrow.getDataRequestByHash(user1, cert2sha);
 
         // TODO: check balances of seeker, issuer and user
         assert.equal(seeker, seeker1, 'Seeker should match');
@@ -363,7 +367,7 @@ contract('Escrow', async (accounts) => {
         const inprogressAvailableBalance = await escrow.seekerAvailableBalance(seeker1);
         const inprogressInflightBalance = await escrow.seekerInflightBalance(seeker1);
 
-        const [seekerBefore, statusBefore] = await escrow.getDataRequestByHash(user2, cert4sha);
+        const {seeker: seekerBefore, status: statusBefore} = await escrow.getDataRequestByHash(user2, cert4sha);
 
         assert.equal(seekerBefore, seeker1, 'Seeker should match');
         assert.equal(statusBefore, RequestStatus.Initial, 'Status should be 1 (Initial)');
@@ -373,7 +377,7 @@ contract('Escrow', async (accounts) => {
         const cancelledAvailableBalance = await escrow.seekerAvailableBalance(seeker1);
         const cancelledInflightBalance = await escrow.seekerInflightBalance(seeker1);
 
-        const [seekerAfter, statusAfter, hash] = await escrow.getDataRequestByHash(user2, cert4sha);
+        const {seeker: seekerAfter, status: statusAfter, hash} = await escrow.getDataRequestByHash(user2, cert4sha);
 
         assert.equal(seekerAfter, seeker1, 'Seeker should match');
         assert.equal(statusAfter, RequestStatus.SeekerCancelled, 'Status should be 6 (SeekerCancelled)');
@@ -381,22 +385,9 @@ contract('Escrow', async (accounts) => {
 
         // check balances
         assert.equal(inprogressAvailableBalance, initialAvailableBalance - (inprogressInflightBalance - initialInflightBalance), 'inprogressAvailableBalance should be initialAvailableBalance minus the delta of inflight balances');
-        assert.ok(inprogressAvailableBalance.equals(initialAvailableBalance - requestPrice));
-        assert.ok(inprogressInflightBalance.equals(initialInflightBalance + requestPrice));
-        assert.ok(cancelledAvailableBalance.equals(initialAvailableBalance));
-        assert.ok(cancelledInflightBalance.equals(initialInflightBalance));
+        assert.equal(inprogressAvailableBalance.toNumber(), initialAvailableBalance.addn(-requestPrice).toNumber());
+        assert.equal(inprogressInflightBalance.toNumber(), initialInflightBalance.addn(requestPrice).toNumber());
+        assert.ok(cancelledAvailableBalance.eq(initialAvailableBalance));
+        assert.ok(cancelledInflightBalance.eq(initialInflightBalance));
     });
-
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
-    // it('', async () => {});
 });
