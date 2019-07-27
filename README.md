@@ -61,4 +61,4 @@ For functional tests use https://aleybovich.github.io/smart-contract-executor/
 
 ### Who do I talk to? ###
 
-* info@pathfoundation.io
+* Andrey: info@pathfoundation.io
