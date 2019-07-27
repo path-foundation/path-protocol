@@ -2,7 +2,7 @@ const { artifacts, contract, assert } = global;
 const Deputable = artifacts.require('Deputable');
 const { getLogArgument } = require('./util/logs.js');
 
-const zeroAddress = "0x0000000000000000000000000000000000000000";
+const zeroAddress = '0x0000000000000000000000000000000000000000';
 
 contract('Deputable', (accounts) => {
     let ownerAddress,
@@ -56,12 +56,11 @@ contract('Deputable', (accounts) => {
             const tx = await instance.setDeputy(zeroAddress, { from: deputyAddress });
             const deputyFromLog = getLogArgument(tx.logs, 'DeputyModified', 'newDeputy');
             const deputyFromState = await instance.deputy();
-    
+
             assert.equal(deputyFromLog, zeroAddress, 'Deputy should match');
             assert.equal(deputyFromState, zeroAddress, 'Deputy should match');
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         }
-        
     });
 });

@@ -136,7 +136,7 @@ contract('Certificates', (accounts) => {
     it('Retrieving user certificate', async () => {
         const testHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
 
-        const {issuer, revoked} = await instance.getCertificateMetadata(user1address, testHash);
+        const { issuer, revoked } = await instance.getCertificateMetadata(user1address, testHash);
 
         assert.equal(revoked, false, 'Certificate should not be revoked');
         assert.equal(issuer, issuer1address, 'Issuer should match');
@@ -208,7 +208,7 @@ contract('Certificates', (accounts) => {
     // ############## getCertificateAt ############
 
     it('Get user certificate at index that exists', async () => {
-        const {hash, issuer, revoked} = await instance.getCertificateAt(user1address, 0);
+        const { hash, issuer, revoked } = await instance.getCertificateAt(user1address, 0);
 
         const testHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
 
@@ -218,7 +218,7 @@ contract('Certificates', (accounts) => {
     });
 
     it('Get user certificate at index that doesn\'t exist', async () => {
-        const {hash} = await instance.getCertificateAt(user1address, 3);
+        const { hash } = await instance.getCertificateAt(user1address, 3);
 
         assert.equal(hash, 0, 'Issuer should be 0 as there is no certificate at position 3');
     });

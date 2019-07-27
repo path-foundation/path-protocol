@@ -27,10 +27,10 @@ contract('PublicKeys', async (accounts) => {
             await instance.addPublicKey(pub1, { from: seeker2 });
             assert.fail('Should fail');
         } catch (error) {
-            if (error.reason == "Sender's address doesn't match the public key") {
+            if (error.reason === "Sender's address doesn't match the public key") {
                 assert.ok(true);
             } else {
-                assert.fail("Failed with a wrong reason")
+                assert.fail('Failed with a wrong reason');
             }
         }
     });

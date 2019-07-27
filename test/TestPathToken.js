@@ -155,12 +155,12 @@ contract('PathToken', (accounts) => {
         await instance.approve(ownerAddress, 420, { from: user1Address });
         // Now increase that approval by 47 tokens
 
-       await instance.increaseApproval(
+        await instance.increaseApproval(
             ownerAddress,
             47,
             { from: user1Address }
         );
-        
+
         // Check owner's allowance for spending user1's tokens - should be 467
         const allowance = await instance.allowance(user1Address, ownerAddress);
 
