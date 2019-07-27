@@ -57,17 +57,6 @@ Deploy:
 Unit Test:
 * `truffle test`
 
-Also, truffle is sometimes lagging with ethereum compiler version included in it; 
-to upgrade etehreum compiler for your truffle install:
-
-`cd /Users/<username>/.local/share/npm/lib/node_modules/truffle`
-
-or (when using nvm as a node version manager)
-
-`cd /Users/<username>/.nvm/versions/node/v8.10.0/lib/node_modules/truffle`
-
-Then open `package.json`, change `solc` version to the desired one, save and run `npm install`.
-
 For functional tests use https://aleybovich.github.io/smart-contract-executor/
 
 ### Who do I talk to? ###
