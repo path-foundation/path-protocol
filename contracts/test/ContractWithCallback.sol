@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.1;
 
 /**
     This contract is used in testing PathToken' TransferAndCallback functionality
@@ -19,8 +19,8 @@ contract ContractWithCallback is TransferAndCallbackReceiver {
 
     // Here we receive additional data as bytes type
     // and unpack into expected variables
-    function balanceTransferred(address, uint256, bytes _data) public {
-        require(msg.sender == approvedToken);
+    function balanceTransferred(address, uint256, bytes memory _data) public {
+        require(msg.sender == approvedToken, "Sender is not an approved token");
 
         uint256 btsptr;
         address _user;
@@ -42,6 +42,4 @@ contract ContractWithCallback is TransferAndCallbackReceiver {
         seekerPublicKey = _seekerPublicKey;
         certificateId = _certificateId;
     }
-
-
 }

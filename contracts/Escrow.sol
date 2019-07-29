@@ -1,9 +1,6 @@
 /* solium-disable security/no-block-members */
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.1;
 
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-
-import "./Deputable.sol";
 import "./Certificates.sol";
 import "./PublicKeys.sol";
 import "./PathToken.sol";
@@ -11,39 +8,39 @@ import "./PathToken.sol";
 /// @title Implements a store of requests and escrow of payments
 /// @author Path Foundation
 /// @dev The basic workflow would be as following:
-/// 1. Seeker approves token withdrawl by the escrow in the amount 
+/// 1. Seeker approves token withdrawl by the escrow in the amount
 /// equal or greater than the request price
 /// 2. Optionally, Seeker may deposite an amount of tokens
 /// greater than required for a request (say, 10x) by calling 'increaseAvailableBalance()' if they anticipate
 /// making several requests - this will avoid the escrow having to withdraw tokens from Seeker
-/// on each request thus saving the Seeker some amount of gas. 
+/// on each request thus saving the Seeker some amount of gas.
 /// Note, that the Seekr needs to approve the escrow to withdraw that amount from the Seeker
 /// proior to calling `increaseAvailableBalance()` by calling `PathToken.approve(escrow_address, value)`
 /// 3. Seeker calls `submitRequest`
-/// Note: Seeker app should implement some way of notifying the User app about the request 
-/// (e.g. via Android/iOS push notifications) - preferred; 
+/// Note: Seeker app should implement some way of notifying the User app about the request
+/// (e.g. via Android/iOS push notifications) - preferred;
 /// or User app should implement some sort of a periodic pull - not ideal
 /// 4. User receives the request for certificate and either approves or denies it
-/// 5. If denied, the request on the escrow contract is marked as Denied 
+/// 5. If denied, the request on the escrow contract is marked as Denied
 /// and the Seeker gets their tokens refunded into their available balance escrow account
-/// Note: Seeker may retrieve tokens from their available balance account on the escrow contract 
+/// Note: Seeker may retrieve tokens from their available balance account on the escrow contract
 /// at any time.
 /// 6. If approved, User app retrieves the certificate from their cert store,
 /// decrypts it and reencrypts with the Seeker's public key (retrieved from PublikKeys contract)
 /// 7. User places the encrypted cert on IPFS
-/// 8. User calls `userCompleteRequest`, passing the IPFS locator of the certificate; the User app 
+/// 8. User calls `userCompleteRequest`, passing the IPFS locator of the certificate; the User app
 /// notifies the Seeker app (via a push notification of sorts or a pull by Seeker app) that
 /// the cert is ready to be acquired
 /// 9. Seeker app pickes up the cert from IPFS, decrypts it, hashes it using sha256 algorithm, and
-/// compares to the expected hash 
+/// compares to the expected hash
 /// 10. If hashes don't match, the verification is a FAIL. Further behavior is stil undetermined
 /// but will probably include human intervention and some sort of penalties for either side - TBD
 /// 11. If hashes match, the verification is a SUCCESS. At this point, the tokens from the escrow
 /// are distributed between the user and the issuer.
 
-/// Things to consider: 
+/// Things to consider:
 /// 1. How to deal with a failure to match cert hashes
-/// 2. What if hashes match but the content of the cert doesn't match 
+/// 2. What if hashes match but the content of the cert doesn't match
 /// the declared achievement/degree/position etc.
 contract Escrow is Deputable {
     using SafeMath for uint256;
@@ -58,7 +55,7 @@ contract Escrow is Deputable {
     PathToken public token;
 
     // Cost of a request in PATH tokens
-    uint public tokensPerRequest; 
+    uint public tokensPerRequest;
     // Recentage of token reward going to the issuer, in percent, like 60(%)
     uint public issuerReward;
 
@@ -80,7 +77,7 @@ contract Escrow is Deputable {
         token = _token;
         certificates = _certificates;
         publicKeys = _publicKeys;
-        tokensPerRequest = 25 * 10 ** uint(token.decimals()); // 25 * 10^6 
+        tokensPerRequest = 25 * 10 ** uint(token.decimals()); // 25 * 10^6
 
         // Issuer gets <issuerReward>%, user gets the rest
         issuerReward = 50;
@@ -111,7 +108,7 @@ contract Escrow is Deputable {
         issuerReward = _issuerReward;
     }
 
-    /// @notice Method increases Seeker's available balance on escrow account 
+    /// @notice Method increases Seeker's available balance on escrow account
     /// by transferring tokens from Seeker to escrow. The method is used for gas savings
     /// if the Seeker anticipates multiple requests
     /// @dev Seeker needs to make show they approve withdrawal of the deposit amount by the escrow address
@@ -119,14 +116,14 @@ contract Escrow is Deputable {
     /// param _amount Amount to deposit to the Seekers avail balance account on the escrow
     function increaseAvailableBalance(uint _amount) public {
         address seeker = msg.sender;
-        
+
         // Make sure seeker allowed transferring the tokens
-        require(token.allowance(seeker, this) >= _amount, "Transfer not approved");
+        require(token.allowance(seeker, address(this)) >= _amount, "Transfer not approved");
 
         require(token.balanceOf(seeker) >= _amount, "Insufficient balance");
 
         // transfer tokens from seeker's account
-        token.transferFrom(seeker, this, _amount);
+        token.transferFrom(seeker, address(this), _amount);
 
         // Increase seeker's available balance
         seekerAvailableBalance[seeker] = seekerAvailableBalance[seeker].add(_amount);
@@ -136,7 +133,7 @@ contract Escrow is Deputable {
     function refundAvailableBalance() public {
         address seeker = msg.sender;
         uint balance = seekerAvailableBalance[seeker];
-        
+
         require(balance > 0, "Balance is zero");
 
         seekerAvailableBalance[seeker] = 0;
@@ -147,7 +144,7 @@ contract Escrow is Deputable {
     /// @param _seeker Seeker's address
     function refundAvailableBalanceAdmin(address _seeker) public onlyOwnerOrDeputy {
         uint balance = seekerAvailableBalance[_seeker];
-        
+
         require(balance > 0, "Balance is zero");
 
         seekerAvailableBalance[_seeker] = 0;
@@ -164,7 +161,7 @@ contract Escrow is Deputable {
         UserDenied, // 3
         // Certificate is received by the Seeker and successfully verified against the certificate hash
         SeekerCompleted, // 4
-        // Certificate is received by the Seeker, but the hash doesnt match; 
+        // Certificate is received by the Seeker, but the hash doesnt match;
         // TODO: some remediation action is needed here
         SeekerFailed, // 5
         // Request is cancelled by the Seeker - only possible if the request status is Initial
@@ -183,7 +180,7 @@ contract Escrow is Deputable {
         bytes32 locatorHash; // 32
     }
 
-    // Mapping of users (address) to arrays of requests 
+    // Mapping of users (address) to arrays of requests
     mapping (address => DataRequest[]) requests;
 
     /// @notice Retrurn the number of requests for a provided user
@@ -195,9 +192,9 @@ contract Escrow is Deputable {
     /// @notice Retrieve a request by its index in the user's requests array
     /// @param _user User address
     /// @param _i Index of the certificate to retrieve
-    function getDataRequestByIndex(address _user, uint _i) public view 
+    function getDataRequestByIndex(address _user, uint _i) public view
         returns (address seeker, RequestStatus status, bytes32 hash, uint48 timestamp) {
-        
+
         DataRequest[] storage reqs = requests[_user];
 
         // Make sure the index is less than the length of the array
@@ -208,7 +205,7 @@ contract Escrow is Deputable {
             timestamp = reqs[_i].timestamp;
         }
 
-        return;
+        return (seeker, status, hash, timestamp);
     }
 
     /// @notice Retrieve request index by hash
@@ -218,7 +215,6 @@ contract Escrow is Deputable {
     function getDataRequestIndexByHash(address _user, bytes32 _hash) public view
         returns (int index) {
         DataRequest[] storage reqs = requests[_user];
-    
         for (uint i = 0; i < reqs.length; i ++) {
             if (reqs[i].hash == _hash) {
                 return int(i);
@@ -234,9 +230,9 @@ contract Escrow is Deputable {
     /// @return seeker Seeker address
     /// @return status Request status
     /// @return timestamp Request creation timestamp (in seconds)
-    function getDataRequestByHash(address _user, bytes32 _hash) public view 
+    function getDataRequestByHash(address _user, bytes32 _hash) public view
         returns (address seeker, RequestStatus status, bytes32 hash, uint48 timestamp) {
-        
+
         int index = getDataRequestIndexByHash(_user, _hash);
 
         if (index >= 0) {
@@ -255,12 +251,12 @@ contract Escrow is Deputable {
 
     /// @notice Seeker places the request for a user's certificate with provided hash.
     /// Seeker can optionally send some ETH to cover User's gas for User's interaction with the contract
-    /// NOTE: Seeker can first check if the certificate is revoked (before submitting a request), 
+    /// NOTE: Seeker can first check if the certificate is revoked (before submitting a request),
     /// by calling `Certificates.getCertificateMetadata()`;
     /// this will save gas for the call below if the cert is revoked
     /// @param _user User address
     /// @param _hash Certificate hash
-    function submitRequest(address _user, bytes32 _hash) public payable {
+    function submitRequest(address payable _user, bytes32 _hash) public payable {
 
         // Make sure the escrow contract is enabled
         require (enabled, "Escrow is disabled and doesn't accept new requests");
@@ -269,19 +265,19 @@ contract Escrow is Deputable {
         address issuer;
         bool revoked;
         (issuer, revoked) = certificates.getCertificateMetadata(_user, _hash);
-        require(issuer != 0, "Requested certificate not found");
+        require(address(issuer) != address(0), "Requested certificate not found");
         require(revoked == false, "Requested certificate has been revoked");
 
         address seeker = msg.sender;
 
         // Seeker's public key is expected to already be in seekerPublicKeys mapping
-        // It gets there when a seeker is initialized in the app, 
+        // It gets there when a seeker is initialized in the app,
         // by calling addSeekerPubKey()
         require (publicKeys.publicKeyStore(seeker).length != 0, "Seeker is not registered");
 
-        // First, check if seeker allowed this Escrow contract to transfer the payment 
+        // First, check if seeker allowed this Escrow contract to transfer the payment
         uint availableBalance = seekerAvailableBalance[seeker];
-        uint allowance = token.allowance(seeker, this);
+        uint allowance = token.allowance(seeker, address(this));
         require (availableBalance >= tokensPerRequest || allowance >= tokensPerRequest, "Insufficient balance");
 
         // We either take tokens from seeker's bank or transfer from their account
@@ -289,7 +285,7 @@ contract Escrow is Deputable {
             seekerAvailableBalance[seeker] = seekerAvailableBalance[seeker].sub(tokensPerRequest);
             seekerInflightBalance[seeker] = seekerInflightBalance[seeker].add(tokensPerRequest);
         } else {
-            token.transferFrom(seeker, this, tokensPerRequest);
+            token.transferFrom(seeker, address(this), tokensPerRequest);
             seekerInflightBalance[seeker] = seekerInflightBalance[seeker].add(tokensPerRequest);
         }
 
@@ -333,7 +329,7 @@ contract Escrow is Deputable {
         // Refund seeker tokens
         seekerInflightBalance[req.seeker] = seekerInflightBalance[req.seeker].sub(tokensPerRequest);
         seekerAvailableBalance[req.seeker] = seekerAvailableBalance[req.seeker].add(tokensPerRequest);
-        
+
         emit RequestDenied(user, req.seeker, _hash, index);
     }
 
@@ -401,7 +397,7 @@ contract Escrow is Deputable {
 
         (issuer, revoked) = certificates.getCertificateMetadata(_user, _hash);
 
-        require(issuer > 0, "Certificate doesn't exist");
+        require(issuer > address(0), "Certificate doesn't exist");
 
         req.status = RequestStatus.SeekerCompleted;
 
@@ -409,7 +405,7 @@ contract Escrow is Deputable {
 
         uint issuerRewardTokens = tokensPerRequest.mul(issuerReward).div(100);
         uint userReward = tokensPerRequest - issuerRewardTokens;
-        
+
         token.transfer(issuer, issuerReward);
 
         token.transfer(_user, userReward);

@@ -1,8 +1,14 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.1;
 
 import "./TransferAndCallbackInterface.sol";
 import "./TransferAndCallbackReceiver.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol";
+
+contract ERC20Basic {
+  function totalSupply() public view returns (uint256);
+  function balanceOf(address who) public view returns (uint256);
+  function transfer(address to, uint256 value) public returns (bool);
+  event Transfer(address indexed from, address indexed to, uint256 value);
+}
 
 contract TransferAndCallback is ERC20Basic, TransferAndCallbackInterface {
 
@@ -17,8 +23,7 @@ contract TransferAndCallback is ERC20Basic, TransferAndCallbackInterface {
      * @param _value Amount of tokens that will be transferred.
      * @param _data  Transaction metadata.
      */
-    function transferAndCallback(address _to, uint256 _value, bytes _data) public returns(bool) {
-        
+    function transferAndCallback(address _to, uint256 _value, bytes memory _data) public returns(bool) {
         // First make sure that _to address is a contract
         uint256 codeLength;
         /* solium-disable-next-line security/no-inline-assembly */
@@ -29,7 +34,7 @@ contract TransferAndCallback is ERC20Basic, TransferAndCallbackInterface {
         require(codeLength > 0, "'_to' address must be a contract");
 
         // transfer funds
-        super.transfer(_to, _value);
+        transfer(_to, _value);
 
         TransferAndCallbackReceiver receiver = TransferAndCallbackReceiver(_to);
         receiver.balanceTransferred(msg.sender, _value, _data);

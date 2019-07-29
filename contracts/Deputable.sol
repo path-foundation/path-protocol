@@ -1,7 +1,6 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.1;
 
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-
+import './Ownable.sol';
 
 /// @title Deputable
 /// @author Path Foundation
@@ -9,7 +8,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 /// @dev In general, deputy would have the same permissions as the owner, except that it can't change the owner
 contract Deputable is Ownable {
     address public deputy;
-    
+
     event DeputyModified(address indexed previousDeputy, address indexed newDeputy);
 
     /// @notice Set a new deputy

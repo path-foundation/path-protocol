@@ -6,12 +6,12 @@ const apiKey = process.env.INFURA_API_KEY;
 module.exports = {
     compilers: {
         solc: {
-            version: "0.4.24",
+            version: '0.5.1',
             optimizer: {
                 enabled: true,
                 runs: 200,
             },
-        }
+        },
     },
     networks: {
         development: {

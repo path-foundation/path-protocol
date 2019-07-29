@@ -1,11 +1,11 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.1;
 
 import "./Deputable.sol";
 import "./Issuers.sol";
 
 /// @title The store of certificate hashes per user
 /// @author Path Foundation
-/// @notice The contract is used by Issuers when submitting certificates and 
+/// @notice The contract is used by Issuers when submitting certificates and
 /// by Seekers when verifying a certificate received from a User
 contract Certificates is Deputable {
     /// @notice mapping of user addresses to array of their certificates
@@ -16,7 +16,7 @@ contract Certificates is Deputable {
 
     /// @title Structure represents a single certificate metadata
     struct Certificate {
-        // SHA256 hash of the certificate itself, used for validation of the certificate 
+        // SHA256 hash of the certificate itself, used for validation of the certificate
         // by the Seeker once they receive it from the User
         // This hash is also used as the certificate id
         bytes32 hash; // 32 bytes
@@ -34,7 +34,7 @@ contract Certificates is Deputable {
 
     // Constructor
     constructor(Issuers _issuersContract) public {
-        issuersContract = _issuersContract; 
+        issuersContract = _issuersContract;
     }
 
     /// @notice Owner and deputy can modify Issuers contract address (for upgrades etc)
@@ -84,7 +84,7 @@ contract Certificates is Deputable {
     /// @return _revoked Flag showing whether the certificate has been revoked by its issuer
     function getCertificateMetadata(address _user, bytes32 _hash) public view
         returns (address issuer, bool revoked) {
-        
+
         // Get certificates array
         Certificate[] storage certs = certificates[_user];
 
@@ -120,7 +120,7 @@ contract Certificates is Deputable {
     /// @return hash Certificate hash
     /// @return issuer Address of the certificate issuer
     /// @return revoked Flag showing whether the certificate has been revoked by its issuer
-    function getCertificateAt(address _user, uint _index) public view 
+    function getCertificateAt(address _user, uint _index) public view
         returns(bytes32 hash, address issuer, bool revoked) {
 
         Certificate[] storage certs = certificates[_user];
