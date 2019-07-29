@@ -19,6 +19,13 @@ module.exports = {
             port: 7545,
             network_id: '*', // Match any network id
         },
+        coverage: {
+            host: '127.0.0.1',
+            network_id: '*',
+            port: 8555,
+            gas: 0xfffffffffff, // <-- Use this high gas value
+            gasPrice: 0x01, // <-- Use this low gas price
+        },
         ropsten: {
             provider: function () {
                 return new HDWalletProvider(mnemonic, `https://ropsten.infura.io/${apiKey}`, 0, 10);

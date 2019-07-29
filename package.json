@@ -40,7 +40,7 @@
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
     "mocha": "^5.2.0",
-    "solidity-coverage": "^0.5.5",
+    "solidity-coverage": "^0.6.3",
     "truffle-core": "^5.0.27",
     "truffle-hdwallet-provider": "0.0.6",
     "truffle-legacy-system": "^1.0.7",
