@@ -5,16 +5,13 @@ node_js:
 env:
   - TEST_MNEMONIC="kiwi just service vital feature rural vibrant copy pledge useless fee forum"
 install: 
-  - lsb_release -a
   - npm install
   - npm install -g truffle
   - npm install solidity-coverage
-#  - sudo add-apt-repository ppa:ethereum/ethereum -y
-#  - sudo apt-get update
-#  - sudo apt-get install solc
   - sudo apt update
   - sudo apt install snapd
   - sudo snap install solc
+  - solc --version
 script: 
   - ./node_modules/.bin/eslint ./test
   - ./node_modules/.bin/solidity-coverage

@@ -1,8 +1,15 @@
-module.exports.getLogArgument = (logs, eventName, argumentName) => {
+const getLogArguments = (logs, eventName) => {
     const log = logs.find(l => l.event === eventName);
-    if (!log || !(argumentName in log.args)) {
-        throw Error(`Argument "${argumentName}" does not exist in the log "${eventName}"`);
+    if (!log) {
+        throw Error(`Log event"${eventName}" doesn't exist`);
     }
 
-    return log ? log.args[argumentName] : null;
+    return log.args;
 };
+
+const getLogArgument = (logs, eventName, argumentName) => {
+    const args = getLogArguments(logs, eventName);
+    return args ? args[argumentName] : null;
+};
+
+module.exports = { getLogArguments, getLogArgument };

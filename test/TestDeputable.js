@@ -7,7 +7,7 @@ const zeroAddress = '0x0000000000000000000000000000000000000000';
 contract('Deputable', (accounts) => {
     let ownerAddress,
         deputyAddress,
-        issuer1address;
+        nonOwnerAddress;
 
     let instance;
 
@@ -15,7 +15,7 @@ contract('Deputable', (accounts) => {
         [
             ownerAddress,
             deputyAddress,
-            issuer1address,
+            nonOwnerAddress,
         ] = accounts;
 
         instance = await Deputable.new();
@@ -43,7 +43,7 @@ contract('Deputable', (accounts) => {
     it('Non-owner and non-deputy should not be able to modify a deputy', async () => {
         let error;
         try {
-            await instance.setDeputy(issuer1address, { from: issuer1address });
+            await instance.setDeputy(nonOwnerAddress, { from: nonOwnerAddress });
         } catch (e) {
             error = e;
         }
