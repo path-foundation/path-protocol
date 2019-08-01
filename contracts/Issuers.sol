@@ -12,7 +12,7 @@ contract Issuers is Deputable {
     enum IssuerStatus { None, Active, Inactive }
 
     event LogIssuerAdded(address indexed _issuer);
-    
+
     /// @notice Add a new active issuer or reactivate inactive user
     function addIssuer(address _issuerAddress) public onlyOwnerOrDeputy {
         IssuerStatus status = getIssuerStatus(_issuerAddress);
@@ -33,7 +33,7 @@ contract Issuers is Deputable {
         if (status == IssuerStatus.Active) {
             issuers[_issuerAddress] = IssuerStatus.Inactive;
             emit LogIssuerRemoved(_issuerAddress);
-        } 
+        }
     }
 
     /// @notice Method returns issuer status
