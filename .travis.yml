@@ -8,6 +8,7 @@ install:
   - npm install
   - npm install -g truffle
   - npm install solidity-coverage
+  - sudo apt-get install -y dpkg
   - sudo add-apt-repository ppa:ethereum/ethereum -y
   - sudo apt-get update
   - sudo apt-get install solc
