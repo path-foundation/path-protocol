@@ -8,9 +8,9 @@ install:
   - npm install
   - npm install -g truffle
   - npm install solidity-coverage
-  - sudo apt update
-  - sudo apt install snapd
-  - sudo snap install solc
+  - sudo add-apt-repository ppa:ethereum/ethereum -y
+  - sudo apt-get update
+  - sudo apt-get install solc
   - solc --version
 script: 
   - ./node_modules/.bin/eslint ./test
