@@ -15,9 +15,9 @@ Prerequisites:
 * Install truffle: npm install -g truffle
 * Install Ganache: http://truffleframework.com/ganache
 * Run Ganache
-* npm install -g truffle-flattener # Optional, if you want to flatten contracts
+* npm install -g truffle-flattener
 * Solidity (by Juan Blanco) extension for VS Code # Optional
-* Set TEST_MNEMONIC environment variable to the same mnemonic as used by Ganache
+* Set TEST_MNEMONIC environment variable to the same mnemonic as used by Ganache; update .travis.yml
 
 Prereqs for building documentation:
 * Install solc (native):
