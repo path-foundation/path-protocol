@@ -8,18 +8,18 @@ const { getLogArgument } = require('./util/logs.js');
 const Certificates = artifacts.require('Certificates');
 const Issuers = artifacts.require('Issuers');
 
+const zeroAddress = '0x0000000000000000000000000000000000000000';
+
 const sampleCertificateAWS = {
     title: 'AWS Certified Developer - John Smith - 02/02/2018',
     issuer: 'Amazon',
     student: 'John Smith',
-    expires: 1580533200000, // 1/1/2020
 };
 
 const sampleCertificateMS = {
     title: 'Microsoft Certified IT Professional - John Smith',
     issuer: 'Microsoft',
     student: 'John Smith',
-    expires: 1580533200000,
 };
 
 contract('Certificates', (accounts) => {
@@ -101,36 +101,34 @@ contract('Certificates', (accounts) => {
 
     it('Attempt to add a user certificate by unregistered Issuer', async () => {
         const testHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
-        const { expires } = sampleCertificateAWS;
 
-        try {
-            await instance.addCertificate(
-                user1address,
-                testHash,
-                expires,
-                { from: unregisteredIssuer }
-            );
-            assert.fail('Should not be here');
-        } catch (error) {
-            assert.ok(error instanceof Error);
-        }
+        await instance.addCertificate(
+            user1address,
+            testHash,
+            { from: unregisteredIssuer }
+        )
+            .then(() => {
+                assert.fail('Unregistered issuer should not be able to add a certificate');
+            })
+            .catch((e) => {
+                assert.equal(e.reason, 'Issuer is unregistered or inactive');
+            });
     });
 
     it('Attempt to add a user certificate by inactive Issuer', async () => {
         const testHash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
-        const { expires } = sampleCertificateAWS;
 
-        try {
-            await instance.addCertificate(
-                user1address,
-                testHash,
-                expires,
-                { from: inactiveIssuer }
-            );
-            assert.fail('Should not be here');
-        } catch (error) {
-            assert.ok(error instanceof Error);
-        }
+        await instance.addCertificate(
+            user1address,
+            testHash,
+            { from: inactiveIssuer }
+        )
+            .then(() => {
+                assert.fail('Inactive issuer should not be able to add a certificate');
+            })
+            .catch((e) => {
+                assert.equal(e.reason, 'Issuer is unregistered or inactive');
+            });
     });
 
     it('Retrieving user certificate', async () => {
@@ -145,23 +143,17 @@ contract('Certificates', (accounts) => {
     it('Attempt to retrieve a user certificate with wrong hash', async () => {
         const hash = `0x${sha256('something')}`;
 
-        try {
-            await instance.getCertificateMetadata(user1address, hash);
-            assert.fail('Shouldn\'t get here');
-        } catch (error) {
-            assert.ok(true);
-        }
+        const { issuer } = await instance.getCertificateMetadata(user1address, hash);
+
+        assert.equal(issuer, zeroAddress);
     });
 
     it('Attempt to retrieve a user certificate for non-existing user', async () => {
         const hash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
 
-        try {
-            await instance.getCertificateMetadata(user1address, hash);
-            assert.fail('Shouldn\'t get here');
-        } catch (error) {
-            assert.ok(true);
-        }
+        const { issuer } = await instance.getCertificateMetadata(user2address, hash);
+
+        assert.equal(issuer, zeroAddress);
     });
 
     // ############## getCertificateCount ############
@@ -250,16 +242,37 @@ contract('Certificates', (accounts) => {
         assert.equal(user1address, testAddress, 'Event should contain user1 address');
     });
 
+    it('Revoke a certificate by inactive issuer', async () => {
+        // Temporarily make issuer1 inactive
+        await issuers.removeIssuer(issuer1address);
+
+        const hash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
+
+        const i = await instance.getCertificateIndex(user1address, hash);
+
+        await instance.revokeCertificate(user1address, i, { from: issuer1address })
+            .then(() => {
+                assert.fail();
+            })
+            .catch((e) => {
+                assert.equal(e.reason, 'Issuer is not active');
+            });
+
+        // Re-add issuer1
+        await issuers.addIssuer(issuer1address);
+    });
+
     it('Revoke user1 certificate by another issuer', async () => {
         const hash = `0x${sha256(JSON.stringify(sampleCertificateAWS))}`;
 
         const i = await instance.getCertificateIndex(user1address, hash);
 
-        try {
-            await instance.revokeCertificate(user1address, i, { from: issuer2address });
-            assert.fail('Should not get here');
-        } catch (error) {
-            assert.ok(error instanceof Error);
-        }
+        await instance.revokeCertificate(user1address, i, { from: issuer2address })
+            .then(() => {
+                assert.fail();
+            })
+            .catch((e) => {
+                assert.equal(e.reason, 'Only the certificate issuer can revoke their certificate');
+            });
     });
 });

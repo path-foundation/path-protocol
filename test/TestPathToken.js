@@ -11,6 +11,8 @@ const { artifacts, contract, assert } = global;
 const PathToken = artifacts.require('PathToken');
 const ContractWithCallback = artifacts.require('ContractWithCallback');
 
+const zeroAddress = '0x0000000000000000000000000000000000000000';
+
 contract('PathToken', (accounts) => {
     let ownerAddress,
         tempOwnerAddress,
@@ -48,6 +50,7 @@ contract('PathToken', (accounts) => {
         it('Test changing ownership', async () => {
             // Transfer the ownership
             await instance.transferOwnership(tempOwnerAddress);
+
             await instance.claimOwnership({ from: tempOwnerAddress }).then((tx) => {
                 // Check for OwnershipTransferred event
                 assert.equal(1, tx.logs.length, 'There should be one OwnershipTransferred event');
@@ -59,7 +62,16 @@ contract('PathToken', (accounts) => {
             assert.equal(owner, tempOwnerAddress, 'Owner address should match the second account address');
         });
 
-        it('Test chaning ownership back to the original owner', async () => {
+        it('Test ownership can only be claimed by a pending owner', async () => {
+            try {
+                await instance.claimOwnership({ from: user1Address });
+                assert.fail('Only pending owner can call a method with onlyPendingOwner modifier');
+            } catch (error) {
+                assert.equal(error.reason, 'Only pending owner can call this method');
+            }
+        });
+
+        it('Test changing ownership back to the original owner', async () => {
             await instance.transferOwnership(ownerAddress, { from: tempOwnerAddress });
             await instance.claimOwnership({ from: ownerAddress });
             const owner = await instance.owner();
@@ -77,9 +89,9 @@ contract('PathToken', (accounts) => {
                 });
         });
 
-        it('Test transferring ownership to 0x0 account', async () => {
-        // Try to transfer the ownership to 0x0 address
-            await instance.transferOwnership('0x0')
+        it('Test transferring ownership to zero account', async () => {
+        // Try to transfer the ownership to zero address
+            await instance.transferOwnership(zeroAddress)
                 .then(() => {
                     assert.fail();
                 })
@@ -101,14 +113,44 @@ contract('PathToken', (accounts) => {
         assert.equal(ownersBalance.toString(), '500000000000000', 'Initial balance of the owner should be 500,000,000,000,000');
     });
 
-    it('Test transferring to 0x0 address', async () => {
-        try {
-            await instance.transfer('0x0', 1);
-            // if we get here, the transaction wasn't rejected, which is an unexpected behavior
-            assert.fail();
-        } catch (error) {
-            assert.ok(true);
-        }
+    it('Test transfer to zero address', async () => {
+        await instance.transfer(zeroAddress, 1)
+            .then(() => {
+                assert.fail('Should not transfer to zero address');
+            })
+            .catch((error) => {
+                assert.equal(error.reason, 'Can not transfer to zero address');
+            });
+    });
+
+    it('Test transferFrom to zero address', async () => {
+        await instance.transferFrom(ownerAddress, zeroAddress, 1)
+            .then(() => {
+                assert.fail('Should not transfer to zero address');
+            })
+            .catch((error) => {
+                assert.equal(error.reason, 'Can not transfer to zero address');
+            });
+    });
+
+    it('Test transferring from user with insufficient balance', async () => {
+        await instance.transfer(user2Address, 1, { from: user1Address })
+            .then(() => {
+                assert.fail('Should not be able to transfer tokens from a user with zero balance');
+            })
+            .catch((error) => {
+                assert.equal(error.reason, 'Insufficient balance');
+            });
+    });
+
+    it('Test transferFrom from user with insufficient balance', async () => {
+        await instance.transferFrom(user1Address, user2Address, 1)
+            .then(() => {
+                assert.fail('Should not be able to transfer tokens from a user with zero balance');
+            })
+            .catch((error) => {
+                assert.equal(error.reason, 'Insufficient balance');
+            });
     });
 
     it('Transfer tokens from Owner to User1', async () => {
@@ -130,8 +172,6 @@ contract('PathToken', (accounts) => {
 
         const allowance = await instance.allowance(ownerAddress, user1Address);
 
-        console.log(`Allowance: ${allowance.toNumber()}`);
-
         assert.ok(allowance.eqn(234));
     });
 
@@ -146,6 +186,16 @@ contract('PathToken', (accounts) => {
 
         assert.ok(ownerBalance.subn(234).eq(ownerBalance1), 'Owner balance is wrong');
         assert.ok(user2Balance.addn(234).eq(user2Balance1), 'User 2 balance is wrong');
+    });
+
+    it('Test transferFrom between users with insufficient allowance', async () => {
+        await instance.transferFrom(ownerAddress, user2Address, 234, { from: user1Address })
+            .then(() => {
+                assert.fail('Should not be able to transfer more than allowed');
+            })
+            .catch((e) => {
+                assert.equal(e.reason, 'Insufficient allowed balance');
+            });
     });
 
     it('Test increasing allowance', async () => {
@@ -165,6 +215,28 @@ contract('PathToken', (accounts) => {
         const allowance = await instance.allowance(user1Address, ownerAddress);
 
         assert.ok(allowance.eqn(467));
+    });
+
+    it('Test decreasing allowance', async () => {
+        await instance.approve(user1Address, 1000);
+
+        await instance.decreaseApproval(user1Address, 47);
+
+        // Check owner's allowance for spending user1's tokens - should be 467
+        const allowance = await instance.allowance(ownerAddress, user1Address);
+
+        assert.equal(allowance.toNumber(), 953);
+    });
+
+    it('Test decreasing allowance by value greater than allowance', async () => {
+        await instance.approve(user1Address, 1000);
+
+        await instance.decreaseApproval(user1Address, 1200);
+
+        // Check owner's allowance for spending user1's tokens - should be 467
+        const allowance = await instance.allowance(ownerAddress, user1Address);
+
+        assert.equal(allowance.toNumber(), 0);
     });
 
     it('Test transfer with callback', async () => {
@@ -192,5 +264,25 @@ contract('PathToken', (accounts) => {
         assert.equal(user, params[0], 'User address should match');
         assert.equal(seekerPublicKey, params[1], 'Seeker\'s public key address should match');
         assert.equal(certificateId, params[2], 'CertificateId address should match');
+    });
+
+    it('Can not transfer with callback to a non-contract address', async () => {
+        //const contractWithCallback = await ContractWithCallback.new(instance.address);
+
+        const params = [
+            ownerAddress,
+            `0x${sha256('pubKey')}`,
+            `0x${sha256('certificateId')}`,
+        ];
+
+        const packedArgs = web3.eth.abi.encodeParameters(['address', 'bytes32', 'bytes32'], params);
+
+        await instance.transferAndCallback(ownerAddress, 1000, packedArgs)
+            .then(() => {
+                assert.fail('Should not be able to transfer with callback to a non-contract address');
+            })
+            .catch((e) => {
+                assert.equal(e.reason, '\'_to\' address must be a contract');
+            });
     });
 });

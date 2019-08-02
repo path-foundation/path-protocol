@@ -61,7 +61,7 @@ contract Certificates is Deputable {
         }
 
         // require an active issuer
-        require(issuersContract.getIssuerStatus(issuer) == Issuers.IssuerStatus.Active, "Issuer is inactive");
+        require(issuersContract.getIssuerStatus(issuer) == Issuers.IssuerStatus.Active, "Issuer is unregistered or inactive");
 
         // Create the Certificate object
         Certificate memory cert = Certificate({
@@ -167,7 +167,7 @@ contract Certificates is Deputable {
 
         Certificate storage cert = certificates[_user][_certificateIndex];
 
-        require(issuerAddress == cert.issuer, "Only a certificate issuer can revoke their certificate");
+        require(issuerAddress == cert.issuer, "Only the certificate issuer can revoke their certificate");
 
         cert.revoked = true;
 

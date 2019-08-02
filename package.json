@@ -9,7 +9,8 @@
   "scripts": {
     "test": "truffle test",
     "eslint": "./node_modules/.bin/eslint ./test",
-    "coverage": "./node_modules/.bin/solidity-coverage && open ./coverage/index.html",
+    "coverage": "./node_modules/.bin/solidity-coverage",
+    "coverage-ui": "./node_modules/.bin/solidity-coverage && xdg-open ./coverage/index.html",
     "build-api": "node scripts/build-api.js"
   },
   "repository": {

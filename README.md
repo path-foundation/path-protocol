@@ -17,7 +17,7 @@ Prerequisites:
 * Run Ganache
 * npm install -g truffle-flattener
 * Solidity (by Juan Blanco) extension for VS Code # Optional
-* Set TEST_MNEMONIC environment variable to the same mnemonic as used by Ganache; update .travis.yml
+* Set TEST_MNEMONIC environment variable to the same mnemonic as used by Ganache; update .travis.yml and .solcover.js
 
 Prereqs for building documentation:
 * Install solc (native):
